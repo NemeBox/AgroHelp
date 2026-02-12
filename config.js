@@ -7,7 +7,7 @@ const getApiBaseUrl = () => {
     return 'http://localhost:5000/api';
   }
   // Otherwise, we are on the live site, so use the live API URL
-  return 'https://agrohelp.netlify.app/api';
+  return 'https://frabjous-malabi-24dc80.netlify.app/api';
 };
 
 const API_BASE_URL = getApiBaseUrl();
