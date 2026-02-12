@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AgroHelp | Provider Portal</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800&family=Poppins:wght@900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        /* Prevents the auth container from hitting the navbar/footer */
+        .auth-page {
+            padding: 120px 20px 80px 20px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+    </style>
+</head>
+<body>
+
+    <header id="navbar">
+        <div class="container nav-container">
+            <div class="logo">
+                <span class="logo-text">AgroHelp</span>
+            </div>
+            <nav class="desktop-nav">
+                <ul class="nav-links">
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="service.html">Services</a></li>
+                    <li><a href="contact.html">Contact</a></li>
+                </ul>
+            </nav>
+            <div class="nav-actions" id="navActions">
+                <div id="authButtons">
+                    <a href="auth_cus.html" class="cta-btn">Customer Login</a>
+                </div>
+                <div id="loggedInInfo" style="display: none; align-items: center; gap: 10px;">
+                    <div class="profile-menu-container">
+                        <img id="profilePic" class="profile-pic-circle" alt="User Profile">
+                        <div id="profileDropdownContent" class="profile-dropdown-content">
+                            <a href="#" class="cta-btn logout-btn">Logout</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="auth-page">
+        <div class="auth-container">
+            
+            <div class="auth-visual">
+                <div class="visual-content">
+                    <div class="logo-text" style="color: #fff !important;">AgroHelp</div>
+                    <h1>Join our network of agriculture experts.</h1>
+                </div>
+            </div>
+
+            <div class="auth-form-box">
+                <div class="form-toggle">
+                    <button id="loginToggle" class="active" onclick="setMode('login')">Expert Login</button>
+                    <button id="regToggle" onclick="setMode('register')">Join as Provider</button>
+                </div>
+
+                <h2 id="formTitle">Grow your business with us.</h2>
+
+                <form id="authForm">
+                    <div class="input-group" id="nameField" style="display: none;">
+                        <i class="fa-solid fa-briefcase"></i>
+                        <input type="text" placeholder="Business or Full Name" id="regName">
+                    </div>
+
+                    <div class="input-group">
+                        <i class="fa-solid fa-envelope"></i>
+                        <input type="email" placeholder="Business Email" required id="regEmail">
+                    </div>
+
+                    <div class="input-group">
+                        <i class="fa-solid fa-lock"></i>
+                        <input type="password" placeholder="Password" required id="regPass">
+                    </div>
+
+                    <button type="submit" class="btn-auth" id="submitBtn">Login to Portal</button>
+                </form>
+
+                <div class="service-link">
+                    Looking for services? <a href="auth_cus.html">Login as Customer</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="main-footer">
+        <div class="container footer-grid">
+            <div class="footer-brand">
+                <h2 class="logo-text">AgroHelp</h2>
+                <p>Empowering the agricultural ecosystem through shared resources.</p>
+                <div class="footer-socials">
+                    <a href="#" aria-label="Facebook"><i class="fa-brands fa-facebook-f"></i></a>
+                    <a href="#" aria-label="Twitter"><i class="fa-brands fa-x-twitter"></i></a>
+                    <a href="#" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
+                    <a href="#" aria-label="LinkedIn"><i class="fa-brands fa-linkedin-in"></i></a>
+                </div>
+            </div>
+
+            <div class="footer-links">
+                <h4>Quick Links</h4>
+                <ul>
+                    <li><a href="index.html#home">Home</a></li>
+                    <li><a href="index.html#about">Information</a></li>
+                    <li><a href="service.html">Services</a></li>
+                    <li><a href="contact.html">Contact Us</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-contact">
+                <h4>Contact Us</h4>
+                <p><i class="fa-solid fa-envelope"></i> support@agrohelp.com</p>
+                <p><i class="fa-solid fa-location-dot"></i> Mumbai, Maharashtra, India</p>
+            </div>
+        </div>
+
+        <div class="footer-bottom center">
+            <div class="container">
+                <p>&copy; 2026 AgroHelp. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Redirect if already logged in
+        if (localStorage.getItem('agrohelp_token')) {
+            window.location.href = 'index.html';
+        }
+        let isRegisterMode = false; // Global variable to track mode
+
+        function setMode(mode) {
+            const nameField = document.getElementById('nameField');
+            const regNameInput = document.getElementById('regName'); // Get the input element
+            const formTitle = document.getElementById('formTitle');
+            const submitBtn = document.getElementById('submitBtn');
+            const loginToggle = document.getElementById('loginToggle');
+            const regToggle = document.getElementById('regToggle');
+            
+            if (mode === 'register') { // Switch to register mode
+                nameField.style.display = 'block';
+                regNameInput.setAttribute('required', ''); // Ensure required is set
+                formTitle.innerText = "Start providing services.";
+                submitBtn.innerText = "Create Provider Account";
+                regToggle.classList.add('active');
+                loginToggle.classList.remove('active');
+                isRegisterMode = true;
+            } else {
+                // Switch to login mode
+                nameField.style.display = 'none';
+                formTitle.innerText = "Grow your business with us.";
+                submitBtn.innerText = "Login to Portal";
+                loginToggle.classList.add('active');
+                regToggle.classList.remove('active');
+                regNameInput.removeAttribute('required'); // Remove required for login
+                isRegisterMode = false;
+            }
+        }
+
+        // Initialize mode on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            setMode('login'); // Default to login mode
+        });
+
+        const authForm = document.getElementById('authForm');
+        authForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const name = document.getElementById('regName').value;
+            const email = document.getElementById('regEmail').value;
+            const password = document.getElementById('regPass').value;
+
+            let url = '';
+            let body = {};
+
+            console.log('Frontend sending (provider):', { name, email, password, isRegisterMode });
+
+            if (isRegisterMode) { // Use the global isRegisterMode variable
+                url = 'http://localhost:5000/api/auth/provider/register';
+                body = { name, email, password };
+                // Client-side validation for registration
+                if (!name.trim()) {
+                    alert('Please enter your Business or Full Name.');
+                    document.getElementById('regName').focus();
+                    return; // Stop form submission
+                }
+            } else {
+                url = 'http://localhost:5000/api/auth/provider/login';
+                body = { email, password };
+            }
+
+            try {
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(body),
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    alert(`${isRegisterMode ? 'Registration' : 'Login'} successful! Welcome, ${data.name || data.email}!`);
+                    // Store token (if available) and redirect
+                    if (data.token) {
+                        localStorage.setItem('agrohelp_token', data.token);
+                        localStorage.setItem('agrohelp_user_name', data.name);
+                        localStorage.setItem('agrohelp_user_role', data.role);
+                        // Placeholder for profile picture URL - assuming backend would provide it
+                        localStorage.setItem('agrohelp_user_profile_pic', data.profilePicUrl || '');
+                    }
+                    window.location.href = 'index.html'; // Redirect to homepage or provider dashboard
+                } else {
+                    alert(`Error: ${data.message || 'Something went wrong'}`);
+                }
+            } catch (error) {
+                console.error('Network error:', error);
+                alert('Network error. Please try again.');
+            }
+        });
+    </script>
+    <script src="navbar.js"></script>
+</body>
+</html>

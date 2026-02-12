@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AgroHelp - Modern Agriculture Marketplace</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+<body>
+    <header id="navbar">
+        <div class="container nav-container">
+            <div class="logo">
+                <span class="logo-text">AgroHelp</span>
+            </div>
+            <nav class="desktop-nav">
+                <ul class="nav-links">
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="service.html">Services</a></li>
+                    <li><a href="contact.html">Contact</a></li>
+                </ul>
+            </nav>
+            <div class="nav-actions" id="navActions">
+                <div id="authButtons">
+                    <a href="auth_cus.html" class="cta-btn">Sign In</a>
+                </div>
+                <div id="loggedInInfo" style="display: none; align-items: center; gap: 10px;">
+                    <div class="profile-menu-container">
+                        <img id="profilePic" class="profile-pic-circle" alt="User Profile">
+                        <div id="profileDropdownContent" class="profile-dropdown-content">
+                            <a href="#" class="cta-btn logout-btn">Logout</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <section class="hero" id="home">
+        <div class="container">
+            <div class="hero-content">
+                <span class="hero-badge">Smart Farming Solutions</span>
+                <h1>Find the Right Tools for Your Harvest</h1>
+                <p>Rent premium equipment and access verified professional advice designed for the modern farmer.</p>
+                
+                <div class="search-container">
+                    <div class="search-box">
+                        <span class="search-icon">🔍</span>
+                        <input type="text" placeholder="Search for Tractors, Soil Testing, or Experts...">
+                        <button class="search-btn">Search</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="info-section" id="about">
+    <div class="info-header-full">
+        <div class="container">
+            <span class="section-label">Platform Information</span>
+            <h2 class="title-modern">Technology Rooted in Soil: A Modern Approach</h2>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="info-intro-block reveal">
+            <p>AgroHelp is an innovative community-driven ecosystem meticulously designed to bridge the critical resource accessibility gap in modern farming. By facilitating direct connections between local equipment owners and farmers, we optimize agricultural efficiency, promote sustainable practices, and significantly reduce the heavy financial burden of machinery ownership.</p>
+        </div>
+
+        <div class="flag-list">
+            <div class="flag-row reveal">
+                <div class="flag-image">
+                    <img src="https://images.unsplash.com/photo-1586771107445-d3ca888129ff?auto=format&fit=crop&w=1200&q=80" alt="Sustainable Tech">
+                </div>
+                <div class="flag-text">
+                    <span class="flag-number">01</span>
+                    <h3>Resource Optimization & Sustainability</h3>
+                    <p>We aim to maximize machinery usage cycles, effectively reducing the need for redundant and expensive capital investments. Our platform ensures that high-value assets are utilized to their full potential, lowering the overall carbon footprint of regional agriculture.</p>
+                </div>
+            </div>
+
+            <div class="flag-row reverse reveal">
+                <div class="flag-image">
+                    <img src="https://images.unsplash.com/photo-1589923188900-85dae523342b?auto=format&fit=crop&w=1200&q=80" alt="Community Support">
+                </div>
+                <div class="flag-text">
+                    <span class="flag-number">02</span>
+                    <h3>Community-Driven Logistics & Trust</h3>
+                    <p>Our secure network fosters trust between equipment owners and farmers. We provide the comprehensive infrastructure required for seamless rentals, allowing farmers to focus entirely on their yields rather than machinery maintenance.</p>
+                </div>
+            </div>
+
+            <div class="flag-row reveal">
+                <div class="flag-image">
+                    <img src="https://images.unsplash.com/photo-1530836369250-ef72a3f5cda8?auto=format&fit=crop&w=1200&q=80" alt="Agricultural Expertise">
+                </div>
+                <div class="flag-text">
+                    <span class="flag-number">03</span>
+                    <h3>Knowledge Sharing & Advisory</h3>
+                    <p>True farming success requires more than just tools. AgroHelp provides direct access to a network of certified agronomists and soil experts. Users can book consultations for data-driven insights on soil health and pest management.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+    <section class="why-us" id="why-us">
+        <div class="container">
+            <div class="section-header center">
+                <span class="section-label">Why Choose Us</span>
+                <h2 class="section-title">A Smarter Way to Manage Your Farm</h2>
+            </div>
+            <div class="why-grid">
+                <div class="why-card">
+                    <div class="why-number">01</div>
+                    <h3>Cost Efficiency</h3>
+                    <p>Rent what you need, when you need it. Save capital for your crop growth.</p>
+                </div>
+                <div class="why-card">
+                    <div class="why-number">02</div>
+                    <h3>Verified Experts</h3>
+                    <p>Every service provider undergoes a rigorous verification for quality assurance.</p>
+                </div>
+                <div class="why-card">
+                    <div class="why-number">03</div>
+                    <h3>Secure Logistics</h3>
+                    <p>Our system ensures equipment arrives on time for your specific harvest cycle.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="services" id="services">
+    <div class="container">
+        <div class="section-header center">
+            <span class="section-label">Marketplace</span>
+            <h2 class="section-title">Comprehensive Solutions</h2>
+        </div>
+        
+        <div class="service-grid">
+            <div class="service-card reveal">
+                <div class="card-img-wrapper">
+                    <img src="https://images.unsplash.com/photo-1590682680695-43b964a3ae17?auto=format&fit=crop&w=1200&q=80" alt="Heavy Machinery">
+                </div>
+                <div class="card-body">
+                    <span class="card-tag">Rentals</span>
+                    <h3>Heavy Machinery</h3>
+                    <p>Browse tractors, tillers, and harvesters from verified local owners.</p>
+                    <ul class="card-checklist">
+                        <li>Flexible daily/weekly rates</li>
+                        <li>Insurance included</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="service-card reveal">
+                <div class="card-img-wrapper">
+                    <img src="https://images.unsplash.com/photo-1563514227147-6d2ff665a6a0?w=800&q=80" alt="Soil Analysis">
+                </div>
+                <div class="card-body">
+                    <span class="card-tag">Professional</span>
+                    <h3>Soil Analysis</h3>
+                    <p>Book soil testing and land prep from certified local experts.</p>
+                    <ul class="card-checklist">
+                        <li>NPK level reporting</li>
+                        <li>Pest risk assessment</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="service-card reveal">
+                <div class="card-img-wrapper">
+                    <img src="https://images.unsplash.com/photo-1592982537447-7440770cbfc9?w=800&q=80" alt="Advisory">
+                </div>
+                <div class="card-body">
+                    <span class="card-tag">Advisory</span>
+                    <h3>Expert Consultation</h3>
+                    <p>Direct access to agronomists for data-driven farming insights.</p>
+                    <ul class="card-checklist">
+                        <li>Crop cycle planning</li>
+                        <li>Sustainable practice tips</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<footer class="main-footer">
+    <div class="container footer-grid">
+        <div class="footer-brand">
+            <h2 class="logo-text">AgroHelp</h2>
+            <p>Empowering the agricultural ecosystem through shared resources.</p>
+            <div class="footer-socials">
+                <a href="#" aria-label="Facebook"><i class="fa-brands fa-facebook-f"></i></a>
+                <a href="#" aria-label="Twitter"><i class="fa-brands fa-x-twitter"></i></a>
+                <a href="#" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
+                <a href="#" aria-label="LinkedIn"><i class="fa-brands fa-linkedin-in"></i></a>
+            </div>
+        </div>
+
+        <div class="footer-links">
+            <h4>Quick Links</h4>
+            <ul>
+                <li><a href="#home">Home</a></li>
+                <li><a href="#about">Information</a></li>
+                <li><a href="service.html">Services</a></li>
+            </ul>
+        </div>
+
+        <div class="footer-contact">
+            <h4>Contact Us</h4>
+            <p><i class="fa-solid fa-envelope"></i> support@agrohelp.com</p>
+            <p><i class="fa-solid fa-location-dot"></i> Mumbai, Maharashtra, India</p>
+        </div>
+    </div>
+
+    <div class="footer-bottom center">
+        <div class="container">
+            <p>&copy; 2026 AgroHelp. All rights reserved.</p>
+        </div>
+    </div>
+</footer>
+
+<script src="script.js"></script>
+<script src="navbar.js"></script>
+</body>
+</html>

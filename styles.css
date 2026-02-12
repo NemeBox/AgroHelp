@@ -1,0 +1,1135 @@
+:root {
+    --pastel-green: #e8f5e9;
+    --sage-green: #81c784;
+    --deep-sage: #2e7d32;
+    --white: #ffffff;
+    --cream: #fffdfa;
+    --text-dark: #1b2d1b;
+    --text-muted: #556b55;
+    --radius: 32px;
+    --shadow: 0 20px 50px rgba(0, 0, 0, 0.1);
+    --transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+}
+
+/* Specific for Index/Main Page Navbar */
+#navbar .logo-text {
+    font-size: 1.2rem !important;      /* Small & Sleek */
+    color: var(--deep-sage) !important; /* Brand Green */
+    font-weight: 800;
+    letter-spacing: -0.5px;
+    transition: var(--transition);
+}
+
+/* Fix the Navbar padding so a small logo doesn't look floating */
+#navbar {
+    padding: 0.8rem 0 !important; /* Slimmer bar for a smaller logo */
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid rgba(0,0,0,0.05);
+    position: relative; /* Ensure z-index takes effect */
+    z-index: 100; /* Make sure the navbar is above other content like the hero section */
+}
+
+/* Section 1: Hero - Keep it centered but tight */
+.hero {
+    min-height: 80vh; /* Not full screen, so Section 2 is visible */
+    padding-top: 80px; /* Space for fixed navbar */
+    display: flex;
+    align-items: center;
+}
+
+/* Section 2: Info (The Middle) - Give it a distinct "box" feel */
+#about {
+    padding: 100px 0;
+    background-color: var(--white); /* Pure white to separate from cream body */
+}
+
+/* Section 3: Services - Give it a subtle tint */
+#services {
+    padding: 100px 0;
+    background-color: var(--pastel-green); /* Light green tint */
+}
+
+/* Fix Section Titles so they aren't stuck to the top */
+.section-header {
+    margin-bottom: 60px;
+    text-align: center;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body { 
+    font-family: 'Inter', sans-serif; 
+    background-color: var(--cream); 
+    color: var(--text-dark); 
+    line-height: 1.7; 
+}
+.container { max-width: 1200px; margin: 0 auto; padding: 0 2rem; }
+
+/* Navigation */
+#navbar .logo-text {
+    color: var(--deep-sage) !important; /* Forces the brand green */
+    font-weight: 800;
+    /* Size remains exactly as you have it in your file */
+}
+.nav-container { display: flex; justify-content: space-between; align-items: center; }
+.logo-text { font-size: 1.6rem; font-weight: 800; color: var(--deep-sage); letter-spacing: -1px; }
+.nav-links { display: flex; gap: 2.5rem; list-style: none; }
+.nav-links a { text-decoration: none; color: var(--text-dark); font-weight: 600; font-size: 0.95rem; }
+.cta-btn { background: var(--sage-green); color: white; padding: 0.75rem 1.8rem; border-radius: 50px; text-decoration: none; font-weight: 700; transition: var(--transition); }
+.cta-btn:hover { background: var(--deep-sage); transform: translateY(-2px); }
+
+/* Hero Section */
+.hero {
+    position: relative; 
+    height: 100vh; 
+    display: flex; 
+    align-items: center; 
+    background: linear-gradient(rgba(27, 45, 27, 0.7), rgba(255, 255, 255, 0.1)), 
+                url('https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=1920&q=80');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    overflow: hidden;
+}
+.hero-content { position: relative; z-index: 10; text-align: center; max-width: 850px; margin: 0 auto; }
+.hero h1 { font-size: 4.5rem; color: #fff; line-height: 1.1; margin-bottom: 1.5rem; }
+.hero p { font-size: 1.3rem; color: rgba(255, 255, 255, 0.9); margin-bottom: 3rem; }
+
+/* Search Bar */
+.search-container {
+    max-width: 700px; margin: 0 auto; background: rgba(255, 255, 255, 0.15); 
+    backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.3); padding: 0.8rem; 
+    border-radius: 60px; box-shadow: 0 25px 50px rgba(0, 0, 0, 0.2);
+}
+.search-box { display: flex; align-items: center; gap: 1.5rem; }
+.search-box input { flex: 1; background: transparent; border: none; outline: none; font-size: 1.1rem; color: #fff; }
+.search-box input::placeholder { color: rgba(255, 255, 255, 0.7); }
+.search-btn { background: var(--sage-green); color: white; border: none; padding: 0.9rem 2.2rem; border-radius: 40px; font-weight: 700; cursor: pointer; }
+
+/* --- Redesigned Information Section --- */
+.info-section { padding: 0 0 120px 0; background: var(--white); }
+
+/* Full-Width Header Logic */
+.info-header-full {
+    width: 100%; padding: 100px 0 80px 0;
+    background: linear-gradient(135deg, var(--pastel-green), #fff);
+    margin-bottom: 80px; border-bottom: 1px solid rgba(129, 199, 132, 0.1);
+}
+.title-modern { font-size: 3.8rem; color: var(--deep-sage); letter-spacing: -2px; line-height: 1; }
+
+/* Expanded Intro Layout */
+.info-intro-block { max-width: 950px; margin: 0 auto 100px; text-align: center; }
+.info-intro-block p { font-size: 1.35rem; line-height: 1.6; color: var(--text-dark); font-weight: 500; }
+
+/* Flag Layout Proportions */
+.flag-row { display: flex; align-items: center; gap: 6rem; margin-bottom: 150px; }
+.flag-row.reverse { flex-direction: row-reverse; }
+
+.flag-image { flex: 0 0 55%; } /* Image takes 55% */
+.flag-text { flex: 0 0 45%; }  /* Text takes 45% */
+
+.flag-image img {
+    width: 100%; height: 550px; object-fit: cover; 
+    border-radius: 40px; box-shadow: 0 30px 60px rgba(0,0,0,0.08);
+}
+
+.flag-number { font-size: 4rem; font-weight: 800; color: var(--sage-green); opacity: 0.75; display: block; margin-bottom: 1rem; }
+.flag-text h3 { font-size: 2.2rem; color: var(--deep-sage); margin-bottom: 1.5rem; }
+
+/* Reveal Animation Logic */
+.reveal { opacity: 0; transform: translateY(50px); transition: all 0.8s cubic-bezier(0.165, 0.84, 0.44, 1); }
+.reveal.active { opacity: 1; transform: translateY(0); }
+
+
+/* --- Why Us & Services Section --- */
+.why-us, .services { padding: 120px 0; }
+.why-us { background: var(--pastel-green); }
+.center { text-align: center; }
+
+/* Grid Layouts */
+.why-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2.5rem; margin-top: 5rem; }
+.service-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(380px, 1fr)); gap: 3rem; margin-top: 5rem; }
+
+/* Base Card Styles */
+.why-card, .service-card { 
+    background: #fff; 
+    border-radius: var(--radius); 
+    box-shadow: var(--shadow); 
+    transition: var(--transition); /* Using your smooth 0.4s transition */
+    display: flex; 
+    flex-direction: column; 
+    height: 100%; 
+    border: 2px solid transparent; /* The "invisible" border that will glow */
+}
+
+.why-card { padding: 3.5rem; } /* Extra padding for Why Us cards */
+
+/* --- The Selection Effect (Hover) --- */
+.why-card:hover, .service-card:hover {
+    transform: translateY(-12px); /* Lifts the card up */
+    border-color: var(--deep-sage); /* Dark green border appears */
+    box-shadow: 0 30px 60px rgba(46, 125, 50, 0.15); /* Soft green-tinted shadow */
+}
+
+/* Service Section Layout */
+.service-grid { 
+    display: grid; 
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); 
+    gap: 2.5rem; 
+    margin-top: 4rem; 
+}
+
+.service-card { 
+    background: #fff; 
+    border-radius: var(--radius); 
+    overflow: hidden; /* CRITICAL: This clips the image to the card's rounded corners */
+    box-shadow: var(--shadow); 
+    transition: var(--transition); 
+    display: flex; 
+    flex-direction: column; 
+    height: 100%; 
+    border: 2px solid transparent; /* The "invisible" border for the selection effect */
+}
+
+/* Sharp Selection Effect */
+.service-card:hover { 
+    transform: translateY(-12px); 
+    border-color: var(--deep-sage); /* Clean dark green border instead of neon glow */
+    box-shadow: 0 30px 60px rgba(46, 125, 50, 0.12); 
+}
+
+.card-img-wrapper { 
+    width: 100%;
+    height: 250px; 
+    overflow: hidden; 
+}
+
+.card-img-wrapper img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* Ensures the image doesn't stretch or look "unarranged" */
+}
+
+.card-body { 
+    padding: 2.2rem; 
+    display: flex; 
+    flex-direction: column; 
+    flex-grow: 1; 
+}
+
+/* New styles for dynamic service cards */
+.card-body .card-title {
+    font-size: 1.5rem;
+    color: var(--deep-sage);
+    margin-bottom: 0.5rem;
+    font-weight: 700;
+}
+
+.card-body .card-provider {
+    font-size: 0.9rem;
+    color: var(--text-muted);
+    margin-bottom: 1rem;
+    font-weight: 600;
+}
+
+.card-body .card-description {
+    flex-grow: 1; /* Pushes the footer to the bottom */
+    margin-bottom: 1.5rem;
+    font-size: 0.95rem;
+    line-height: 1.6;
+}
+
+.card-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 1.5rem;
+    border-top: 1px solid rgba(0,0,0,0.05);
+    margin-top: auto; /* Pushes footer to bottom of card-body */
+}
+
+.card-price {
+    font-size: 1.4rem;
+    font-weight: 800;
+    color: var(--deep-sage);
+}
+
+.cta-btn-small {
+    background: var(--sage-green);
+    color: white;
+    padding: 0.5rem 1.2rem;
+    border-radius: 50px;
+    text-decoration: none;
+    font-weight: 700;
+    font-size: 0.85rem;
+    transition: var(--transition);
+}
+
+.cta-btn-small:hover {
+    background: var(--deep-sage);
+    transform: translateY(-2px);
+}
+
+.card-checklist {
+    list-style: none;
+    margin-top: 1.5rem;
+    padding-top: 1.2rem;
+    border-top: 1px solid rgba(0,0,0,0.05);
+    font-size: 0.9rem;
+    color: var(--text-muted);
+}
+
+.card-checklist li::before {
+    content: "✓";
+    color: var(--sage-green);
+    margin-right: 8px;
+    font-weight: 800;
+}
+
+/* --- Global Footer Styles --- */
+.main-footer {
+    background-color: var(--pastel-green); /* Sage Green BG */
+    padding: 80px 0 0 0;
+    margin-top: 100px;
+    border-top: 1px solid rgba(46, 125, 50, 0.1);
+}
+
+.footer-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr; /* Brand gets more space */
+    gap: 4rem;
+    padding-bottom: 60px;
+}
+
+/* Typography */
+
+/* --- Targeted Footer Logo Color --- */
+.footer-brand .logo-text {
+    color: var(--deep-sage) !important;
+}
+
+.main-footer h2 { color: var(--deep-sage); margin-bottom: 1.2rem; }
+.main-footer h4 { color: var(--deep-sage); margin-bottom: 1.5rem; font-size: 1.2rem; }
+.main-footer p { color: var(--text-dark); line-height: 1.7; margin-bottom: 0.8rem; }
+
+/* Navigation Links */
+.footer-links ul { list-style: none; }
+.footer-links li { margin-bottom: 0.8rem; }
+.footer-links li a {
+    text-decoration: none;
+    color: var(--text-dark);
+    transition: var(--transition);
+}
+.footer-links li a:hover { color: var(--deep-sage); padding-left: 5px; }
+
+/* Social Icons Selection Effect */
+.footer-socials { display: flex; gap: 1rem; margin-top: 1.5rem; }
+.footer-socials a {
+    width: 40px; height: 40px;
+    background: #fff;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--deep-sage);
+    transition: var(--transition);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+}
+
+.footer-socials a:hover {
+    background: var(--deep-sage);
+    color: #fff;
+    transform: translateY(-5px); /* Lift effect */
+}
+
+/* Bottom Bar */
+.footer-bottom {
+    background: rgba(0, 0, 0, 0.03); /* Slightly darker bar */
+    padding: 25px 0;
+    font-size: 0.9rem;
+    color: var(--text-muted);
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 768px) {
+    .footer-grid { grid-template-columns: 1fr; gap: 2.5rem; text-align: center; }
+    .footer-socials { justify-content: center; }
+}
+
+/* ------------------------------------------------------------- 
+ Main Services Listing Page (service.html)
+ --------------------------------------------------------------- */
+
+#services-list {
+    padding-top: 120px; /* Space for navbar */
+    padding-bottom: 100px;
+    background-color: var(--pastel-green); /* Match homepage services section */
+}
+
+.no-services-message {
+    padding: 3rem 2rem;
+    text-align: center;
+    color: var(--text-muted);
+    font-style: italic;
+    background: rgba(255, 255, 255, 0.5); /* A slightly more visible message box */
+    border-radius: var(--radius);
+    width: 100%;
+    grid-column: 1 / -1; /* Make it span the full grid width if inside */
+}
+
+
+
+
+/* -------------------------------------------------------------
+ Services Page 
+ --------------------------------------------------------------- */
+
+/* --- High-End Flag Decoration --- */
+.service-flags {
+    background: linear-gradient(180px, #f9fbf9 0%, #ffffff 100%); /* Subtle background tint */
+    padding: 100px 0;
+}
+
+.flag-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 3.5rem;
+}
+
+.flag-card {
+    position: relative;
+    padding: 4rem 2rem;
+    background: #fff;
+    border-radius: 30px; /* More rounded for a modern feel */
+    box-shadow: 0 20px 60px rgba(46, 125, 50, 0.05); /* Soft sage shadow */
+    border: 1px solid rgba(46, 125, 50, 0.05);
+    transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.flag-card:hover {
+    transform: translateY(-15px);
+    box-shadow: 0 40px 80px rgba(46, 125, 50, 0.12);
+    border-color: var(--deep-sage);
+}
+
+/* Header Icons */
+.flag-header {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 2.5rem;
+}
+
+.flag-header i {
+    font-size: 1.8rem;
+    color: var(--deep-sage);
+    background: var(--pastel-green);
+    width: 55px; height: 55px;
+    display: flex;
+    align-items: center; justify-content: center;
+    border-radius: 15px;
+}
+
+.flag-header h3 {
+    font-size: 1.6rem;
+    color: var(--deep-sage);
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    margin: 0;
+}
+
+/* Tree Menu Visuals */
+.tree-menu li {
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 1.05rem;
+    padding: 14px 15px;
+    margin-bottom: 5px;
+    color: var(--text-dark);
+    border-radius: 12px;
+    transition: 0.3s;
+    border-bottom: 1px solid rgba(0,0,0,0.02); /* Very faint line */
+}
+
+.tree-menu li:hover, .active-item {
+    background-color: var(--pastel-green) !important; /* Sage highlight */
+    color: var(--deep-sage) !important;
+    padding-left: 25px !important;
+    box-shadow: inset 4px 0 0 var(--deep-sage); /* Side accent bar */
+}
+
+.branch {
+    color: var(--deep-sage);
+    font-weight: bold;
+    margin-right: 12px;
+    opacity: 0.6;
+}
+
+
+
+
+
+
+
+/* -----------------------------------------
+              CUST AUTH STYLES
+-------------------------------------------- */
+
+/* --- AgroHelp Final Polished Styles --- */
+
+/* --- Root Variables --- */
+:root {
+    --deep-sage: #2e4d2e;
+    --light-sage: #c5e1c5; /* Connected, soft sage for the motto */
+    --pastel-green: #e8f5e9;
+    --error-red: #e74c3c;
+    --text-dark: #1a241b; /* Darker for better arrangement visibility */
+}
+
+/* 1. Base Layout */
+.auth-page {
+    background: linear-gradient(135deg, #e8f0e8 0%, #d1dbd1 100%); 
+    min-height: 100vh;
+    display: flex;
+    align-items: center;      
+    justify-content: center;   
+    /* Using a very clean, structured font for the whole page */
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    padding: 20px;
+    margin: 0;
+}
+
+/* 2. Main Container */
+.auth-container {
+    display: flex;
+    width: 100%;
+    max-width: 1050px; 
+    height: 620px;
+    background: #fff;
+    border-radius: 40px; 
+    box-shadow: 0 50px 100px rgba(46, 125, 50, 0.12);
+    overflow: hidden;
+    position: relative;
+}
+
+/* 3. BIG FLAG */
+.auth-container::after {
+    content: '\f06c'; 
+    font-family: 'Font Awesome 6 Free';
+    font-weight: 900;
+    position: absolute;
+    top: 50%;
+    left: 45.4%; 
+    transform: translate(-50%, -50%);
+    background: var(--deep-sage);
+    color: white;
+    width: 80px;  
+    height: 80px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2.2rem; 
+    border: 8px solid #fff;
+    z-index: 10;
+}
+
+/* 4. Visual Side (Left) */
+.auth-visual {
+    flex: 1;
+    background: linear-gradient(135deg, rgba(46, 125, 50, 0.85), rgba(27, 94, 32, 0.95)), 
+                url('https://images.unsplash.com/photo-1523348837708-15d4a09cfac2?w=800');
+    background-size: cover;
+    padding: 60px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.logo-text {
+    font-size: 3.5rem; 
+    font-weight: 900;           
+    color: #ffffff !important; 
+    letter-spacing: -2.5px; /* Tighter for a designed look */
+    margin-bottom: 5px;
+}
+
+/* CHANGE 1: Motto - Connected & Uniform Color */
+.visual-content h1 {
+    font-size: 1.4rem;
+    color: var(--light-sage) !important; /* Uniform Light Sage */
+    font-weight: 500;
+    letter-spacing: 0px;
+    margin: 0;
+}
+
+/* Removing the white override so it looks connected */
+.visual-content h1 span {
+    color: inherit !important; 
+    font-weight: inherit !important;
+}
+
+/* 5. Form Side (Right) - CHANGE 2: Structured Arrangement */
+.auth-form-box {
+    flex: 1.2;
+    padding: 60px 80px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center; 
+}
+
+/* Welcome/H2 - Structured */
+.auth-form-box h2 {
+    font-size: 2rem;
+    font-weight: 800;
+    color: var(--text-dark);
+    margin-bottom: 30px;
+    letter-spacing: -0.8px;
+    line-height: 1.2;
+}
+
+/* Toggle Buttons - Arranged precisely */
+.form-toggle {
+    display: flex;
+    gap: 35px;
+    margin-bottom: 40px;
+}
+
+.form-toggle button {
+    background: none;
+    border: none;
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: #a0a0a0;
+    text-transform: uppercase;
+    letter-spacing: 1.2px; /* Spacing makes it look organized */
+    cursor: pointer;
+    border-bottom: 3px solid transparent;
+    padding-bottom: 10px;
+    transition: 0.3s;
+}
+
+.form-toggle button.active {
+    color: var(--deep-sage);
+    border-bottom: 3px solid var(--deep-sage);
+}
+
+/* Inputs - Arranged for better visibility */
+.input-group {
+    position: relative;
+    margin-bottom: 25px;
+}
+
+.input-group i {
+    position: absolute;
+    left: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--deep-sage);
+}
+
+.input-group input {
+    width: 100%;
+    background: #fdfdfd;
+    border: 1.5px solid #ececec; /* Thinner but sharper border */
+    border-radius: 15px;
+    padding: 18px 18px 18px 55px;
+    outline: none;
+    font-size: 1rem;
+    font-weight: 500;
+    color: var(--text-dark);
+    transition: all 0.3s ease;
+}
+
+/* Red Validation stays red until valid */
+.input-group input:focus:invalid {
+    border-color: var(--error-red) !important;
+}
+
+.input-group input:focus:valid {
+    border-color: var(--deep-sage);
+}
+
+/* 6. Action Button */
+.btn-auth {
+    width: 100%;
+    padding: 18px;
+    background: var(--deep-sage);
+    color: white;
+    border: none;
+    border-radius: 15px;
+    font-size: 1.05rem;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    cursor: pointer;
+    margin-top: 10px;
+}
+
+/* 7. Professional Link - Green Font ONLY */
+.service-link {
+    margin-top: 30px;
+    text-align: center;
+    font-size: 0.95rem;
+    color: #666;
+}
+
+.service-link a {
+    color: var(--deep-sage) !important;
+    font-weight: 700;
+    text-decoration: none;
+}
+
+.service-link a:hover {
+    text-decoration: underline;
+}
+
+/* 8. Mobile */
+@media (max-width: 850px) {
+    .auth-container { flex-direction: column; height: auto; }
+    .auth-visual, .auth-container::after { display: none; }
+}
+
+
+
+/* -----------------------------------------
+              PROV AUTH STYLES
+-------------------------------------------- */
+
+:root {
+    --deep-sage: #1b3d1e;    
+    --light-sage: #c5e1c5;   
+    --pastel-green: #e8f5e9;
+    --error-red: #e74c3c;
+    --text-dark: #1a241b;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+/* 1. Base Layout */
+.auth-page {
+    background: linear-gradient(135deg, #e8f0e8 0%, #d1dbd1 100%); 
+    min-height: 100vh;
+    display: flex;
+    align-items: center;      
+    justify-content: center;   
+    font-family: 'Inter', 'Segoe UI', sans-serif;
+    padding: 20px;
+}
+
+/* 2. Main Container */
+.auth-container {
+    display: flex;
+    width: 100%;
+    max-width: 1050px; 
+    height: 620px;
+    background: #fff;
+    border-radius: 40px; 
+    box-shadow: 0 50px 100px rgba(27, 61, 30, 0.15);
+    overflow: hidden;
+    position: relative;
+}
+
+/* 3. THE BIG FLAG (Wrench Icon) */
+.auth-container::after {
+    content: '\f0ad'; 
+    font-family: 'Font Awesome 6 Free';
+    font-weight: 900;
+    position: absolute;
+    top: 50%;
+    left: 45.4%; 
+    transform: translate(-50%, -50%);
+    background: var(--deep-sage);
+    color: white;
+    width: 80px;  
+    height: 80px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2.2rem; 
+    border: 8px solid #fff;
+    z-index: 10;
+}
+
+/* 4. Visual Side (Left) */
+.auth-visual {
+    flex: 1;
+    background: linear-gradient(135deg, rgba(27, 61, 30, 0.9), rgba(15, 30, 15, 0.95)), 
+                url('https://images.unsplash.com/photo-1530507629858-e4977d30e9e0?w=800');
+    background-size: cover;
+    padding: 60px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.logo-text {
+    font-size: 3.5rem; 
+    font-weight: 900;           
+    color: #ffffff !important; 
+    letter-spacing: -2.5px;
+    margin-bottom: 5px;
+    font-family: 'Poppins', sans-serif;
+}
+
+.visual-content h1 {
+    font-size: 1.4rem;
+    color: var(--light-sage) !important;
+    font-weight: 500;
+    margin: 0;
+    line-height: 1.2;
+}
+
+/* 5. Form Side (Right) */
+.auth-form-box {
+    flex: 1.2;
+    padding: 60px 80px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center; 
+}
+
+.auth-form-box h2 {
+    font-size: 1.9rem;
+    font-weight: 800;
+    color: var(--text-dark);
+    margin-bottom: 30px;
+    letter-spacing: -0.8px;
+}
+
+.form-toggle {
+    display: flex;
+    gap: 35px;
+    margin-bottom: 40px;
+}
+
+.form-toggle button {
+    background: none;
+    border: none;
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: #a0a0a0;
+    text-transform: uppercase;
+    letter-spacing: 1.2px;
+    cursor: pointer;
+    border-bottom: 3px solid transparent;
+    padding-bottom: 10px;
+    transition: 0.3s;
+    font-family: 'Inter', sans-serif;
+}
+
+.form-toggle button.active {
+    color: var(--deep-sage);
+    border-bottom: 3px solid var(--deep-sage);
+}
+
+.input-group {
+    position: relative;
+    margin-bottom: 25px;
+}
+
+.input-group i {
+    position: absolute;
+    left: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--deep-sage);
+}
+
+.input-group input {
+    width: 100%;
+    background: #fdfdfd;
+    border: 1.5px solid #ececec;
+    border-radius: 15px;
+    padding: 18px 18px 18px 55px;
+    outline: none;
+    font-size: 1rem;
+    font-weight: 500;
+    color: var(--text-dark);
+    font-family: 'Inter', sans-serif;
+    transition: 0.3s;
+}
+
+.input-group input:focus:invalid {
+    border-color: var(--error-red) !important;
+}
+
+.input-group input:focus:valid {
+    border-color: var(--deep-sage);
+}
+
+.btn-auth {
+    width: 100%;
+    padding: 18px;
+    background: var(--deep-sage);
+    color: white;
+    border: none;
+    border-radius: 15px;
+    font-size: 1rem;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    cursor: pointer;
+    margin-top: 10px;
+    transition: 0.3s;
+}
+
+.service-link {
+    margin-top: 30px;
+    text-align: center;
+    font-size: 0.95rem;
+    color: #666;
+}
+
+.service-link a {
+    color: #2e7d32 !important;
+    font-weight: 700;
+    text-decoration: none;
+}
+
+.service-link a:hover {
+    text-decoration: underline;
+}
+
+@media (max-width: 850px) {
+    .auth-container { flex-direction: column; height: auto; }
+    .auth-visual, .auth-container::after { display: none; }
+    .auth-form-box { padding: 40px; }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+/* --- AgroHelp Contact Page Styles --- */
+
+:root {
+    --deep-sage: #2e4d2e;
+    --light-sage: #c5e1c5;
+    --text-dark: #1a241b;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+.contact-page {
+    background: linear-gradient(135deg, #e8f0e8 0%, #d1dbd1 100%);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Inter', sans-serif;
+    padding: 20px;
+}
+
+.contact-container {
+    display: flex;
+    width: 100%;
+    max-width: 1050px;
+    background: #fff;
+    border-radius: 40px;
+    box-shadow: 0 40px 80px rgba(46, 77, 46, 0.1);
+    overflow: hidden;
+}
+
+/* Left Section */
+.contact-info {
+    flex: 1;
+    background: linear-gradient(135deg, #2e4d2e, #1b3d1e);
+    padding: 60px;
+    color: white;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.logo-text {
+    font-size: 2.5rem;
+    font-weight: 900;
+    font-family: 'Poppins', sans-serif;
+    margin-bottom: 20px;
+}
+
+.contact-info h1 {
+    font-size: 2.2rem;
+    line-height: 1.2;
+    margin-bottom: 20px;
+}
+
+.contact-info h1 span {
+    color: var(--light-sage);
+}
+
+.contact-info p {
+    color: rgba(255, 255, 255, 0.8);
+    margin-bottom: 40px;
+    line-height: 1.6;
+}
+
+.contact-cards .card {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 20px;
+    background: rgba(255, 255, 255, 0.1);
+    padding: 15px;
+    border-radius: 15px;
+}
+
+/* Right Section */
+.contact-form-box {
+    flex: 1.2;
+    padding: 60px 80px;
+}
+
+.contact-form-box h2 {
+    font-size: 1.8rem;
+    margin-bottom: 30px;
+    color: var(--text-dark);
+}
+
+.input-group {
+    position: relative;
+    margin-bottom: 20px;
+}
+
+.input-group i {
+    position: absolute;
+    left: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--deep-sage);
+}
+
+/* Handling icons in textarea */
+.input-group textarea {
+    padding: 18px !important;
+}
+
+.input-group input, 
+.input-group select, 
+.input-group textarea {
+    width: 100%;
+    padding: 18px 18px 18px 55px;
+    border: 1.5px solid #ececec;
+    border-radius: 15px;
+    background: #fdfdfd;
+    outline: none;
+    font-family: inherit;
+    font-size: 1rem;
+    transition: 0.3s;
+}
+
+.input-group input:focus, 
+.input-group textarea:focus {
+    border-color: var(--deep-sage);
+}
+
+.btn-contact {
+    width: 100%;
+    padding: 18px;
+    background: var(--deep-sage);
+    color: white;
+    border: none;
+    border-radius: 15px;
+    font-weight: 700;
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.btn-contact:hover {
+    background: #1b3d1e;
+    transform: translateY(-2px);
+}
+
+.back-link {
+    margin-top: 25px;
+    text-align: center;
+}
+
+.back-link a {
+    text-decoration: none;
+    color: #888;
+    font-size: 0.9rem;
+}
+
+.back-link a:hover {
+    color: var(--deep-sage);
+}
+
+@media (max-width: 850px) {
+    .contact-container { flex-direction: column; }
+    .contact-info { padding: 40px; }
+}
+
+/* Profile Picture Styling for Logged-in State */
+.profile-pic-circle {
+    width: 40px; /* Adjust size as needed */
+    height: 40px;
+    border-radius: 50%; /* Makes it circular */
+    object-fit: cover; /* Ensures image covers the area without distortion */
+    z-index: 1; /* Ensure profile pic is above other elements in its stacking context, but below dropdown */
+    border: 2px solid var(--sage-green); /* Optional: a border matching your theme */
+    cursor: pointer; /* Indicates it's clickable */
+}
+
+/* New styles for profile dropdown */
+.profile-menu-container {
+    position: relative;
+    display: flex; /* To align the profile pic and potentially other inline elements */
+    align-items: center;
+    cursor: pointer; /* Indicates it's clickable */
+}
+
+.profile-dropdown-content {
+    display: none; /* Hidden by default */
+    position: absolute;
+    background-color: var(--pastel-green); /* Changed to a lighter green */
+    min-width: 160px; /* Slightly wider for better content */
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 1;
+    border-radius: 8px;
+    padding: 10px 0;
+    right: 0; /* Align to the right of the profile pic */
+    top: 100%; /* Position directly below the profile pic */
+    opacity: 0;
+    z-index: 100000; /* Ensure it appears above all other elements in its stacking context */
+    transform: translateY(-10px);
+    transition: opacity 0.2s ease-out, transform 0.2s ease-out;
+    flex-direction: column; /* Stack items vertically */
+    gap: 5px;
+}
+
+.profile-dropdown-content.show {
+    display: flex; /* Show when 'show' class is added */
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.profile-dropdown-content .cta-btn {
+    width: calc(100% - 20px); /* Adjust width to fit padding */
+    margin: 0 10px; /* Center button with padding */
+    text-align: center;
+    padding: 8px 15px; /* Smaller padding for dropdown button */
+    font-size: 0.9rem;
+    white-space: nowrap; /* Prevent text wrapping */
+}
+
+/* Adjustments for loggedInInfo to remove gap if only profile menu is present */
+#loggedInInfo {
+    gap: 0; /* Remove gap from parent as dropdown handles its own spacing */
+}

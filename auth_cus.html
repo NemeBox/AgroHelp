@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AgroHelp | Join the Community</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        /* Specific layout fix to accommodate fixed nav and footer */
+        body.auth-page {
+            display: block; /* Overrides flex from global if present */
+            background-color: var(--cream);
+        }
+        
+        .auth-section {
+            padding: 120px 20px 80px 20px;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Keeps the logo white specifically on the dark visual side */
+        .auth-visual .logo-text {
+            color: #ffffff !important;
+            margin-bottom: 20px;
+            display: block;
+        }
+    </style>
+</head>
+<body>
+
+    <header id="navbar">
+        <div class="container nav-container">
+            <div class="logo">
+                <span class="logo-text">AgroHelp</span>
+            </div>
+            <nav class="desktop-nav">
+                <ul class="nav-links">
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="service.html">Services</a></li>
+                    <li><a href="contact.html">Contact</a></li>
+                </ul>
+            </nav>
+            <div class="nav-actions" id="navActions">
+                <div id="authButtons">
+                    <a href="auth_pro.html" class="cta-btn">Provider Portal</a>
+                </div>
+                <div id="loggedInInfo" style="display: none; align-items: center; gap: 10px;">
+                    <div class="profile-menu-container">
+                        <img id="profilePic" class="profile-pic-circle" alt="User Profile">
+                        <div id="profileDropdownContent" class="profile-dropdown-content">
+                            <a href="#" class="cta-btn logout-btn">Logout</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <section class="auth-section">
+        <div class="auth-container">
+            <div class="auth-visual">
+                <div class="visual-content">
+                    <div class="logo-text">AgroHelp</div>
+                    <h1>Empowering the <br><span>Future of Farming.</span></h1>
+                </div>
+            </div>
+
+            <div class="auth-form-box">
+                <div class="form-toggle">
+                    <button id="loginBtn" class="active">Login</button>
+                    <button id="registerBtn">Register</button>
+                </div>
+
+                <form id="authForm">
+                    <h2 id="formTitle">Welcome Back</h2>
+                    
+                    <div class="input-group" id="nameField" style="display: none;">
+                        <i class="fa-solid fa-user"></i>
+                        <input type="text" id="username" placeholder="Full Name" 
+                               pattern="^[A-Za-z\s]+$" 
+                               title="Please use letters and spaces only.">
+                    </div>
+
+                    <div class="input-group">
+                        <i class="fa-solid fa-envelope"></i>
+                        <input type="email" id="email" placeholder="Email Address" required>
+                    </div>
+
+                    <div class="input-group">
+                        <i class="fa-solid fa-lock"></i>
+                        <input type="password" id="password" placeholder="Password" required>
+                    </div>
+
+                    <button type="submit" class="btn-auth" id="submitBtn">Sign In</button>
+                </form>
+
+                <p class="service-link">Are you a professional? <a href="auth_pro.html">Register as a Service Provider</a></p>
+            </div>
+        </div>
+    </section>
+
+    <footer class="main-footer">
+        <div class="container footer-grid">
+            <div class="footer-brand">
+                <h2 class="logo-text">AgroHelp</h2>
+                <p>Empowering the agricultural ecosystem through shared resources.</p>
+                <div class="footer-socials">
+                    <a href="#" aria-label="Facebook"><i class="fa-brands fa-facebook-f"></i></a>
+                    <a href="#" aria-label="Twitter"><i class="fa-brands fa-x-twitter"></i></a>
+                    <a href="#" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
+                    <a href="#" aria-label="LinkedIn"><i class="fa-brands fa-linkedin-in"></i></a>
+                </div>
+            </div>
+
+            <div class="footer-links">
+                <h4>Quick Links</h4>
+                <ul>
+                    <li><a href="index.html#home">Home</a></li>
+                    <li><a href="index.html#about">Information</a></li>
+                    <li><a href="service.html">Services</a></li>
+                    <li><a href="contact.html">Contact Us</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-contact">
+                <h4>Contact Us</h4>
+                <p><i class="fa-solid fa-envelope"></i> support@agrohelp.com</p>
+                <p><i class="fa-solid fa-location-dot"></i> Mumbai, Maharashtra, India</p>
+            </div>
+        </div>
+
+        <div class="footer-bottom center">
+            <div class="container">
+                <p>&copy; 2026 AgroHelp. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Redirect if already logged in
+        if (localStorage.getItem('agrohelp_token')) {
+            window.location.href = 'index.html';
+        }
+        const loginBtn = document.getElementById('loginBtn');
+        const registerBtn = document.getElementById('registerBtn');
+        const nameField = document.getElementById('nameField');
+        const usernameInput = document.getElementById('username');
+        const formTitle = document.getElementById('formTitle');
+        const submitBtn = document.getElementById('submitBtn');
+        const authForm = document.getElementById('authForm');
+        const emailInput = document.getElementById('email');
+        const passwordInput = document.getElementById('password');
+
+        let isRegisterMode = false; // Track current mode
+
+        registerBtn.onclick = () => {
+            loginBtn.classList.remove('active');
+            registerBtn.classList.add('active');
+            formTitle.innerText = "Create Account";
+            submitBtn.innerText = "Register Now";
+            nameField.style.display = "block"; 
+            usernameInput.setAttribute('required', ''); 
+            isRegisterMode = true;
+        }
+
+        loginBtn.onclick = () => {
+            registerBtn.classList.remove('active');
+            loginBtn.classList.add('active');
+            formTitle.innerText = "Welcome Back";
+            submitBtn.innerText = "Sign In";
+            nameField.style.display = "none"; 
+            usernameInput.removeAttribute('required'); 
+            isRegisterMode = false;
+        }
+
+        authForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const name = usernameInput.value;
+            const email = emailInput.value;
+            const password = passwordInput.value;
+
+            let url = '';
+            let body = {};
+
+            console.log('Frontend sending (customer):', { name, email, password, isRegisterMode });
+
+            if (isRegisterMode) {
+                url = 'http://localhost:5000/api/auth/customer/register';
+                body = { name, email, password };
+                // Client-side validation for registration
+                if (!name.trim()) {
+                    alert('Please enter your full name.');
+                    usernameInput.focus();
+                    return; // Stop form submission
+                }
+            } else {
+                url = 'http://localhost:5000/api/auth/customer/login';
+                body = { email, password };
+            }
+
+            try {
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(body),
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    alert(`${isRegisterMode ? 'Registration' : 'Login'} successful! Welcome, ${data.name || data.email}!`);
+                    // Store token (if available) and redirect
+                    if (data.token) {
+                        localStorage.setItem('agrohelp_token', data.token);
+                        localStorage.setItem('agrohelp_user_name', data.name);
+                        localStorage.setItem('agrohelp_user_role', data.role);
+                        // Placeholder for profile picture URL - assuming backend would provide it
+                        localStorage.setItem('agrohelp_user_profile_pic', data.profilePicUrl || '');
+                    }
+                    window.location.href = 'index.html'; // Redirect to homepage or dashboard
+                } else {
+                    alert(`Error: ${data.message || 'Something went wrong'}`);
+                }
+            } catch (error) {
+                console.error('Network error:', error);
+                alert('Network error. Please try again.');
+            }
+        });
+    </script>
+    <script src="navbar.js"></script>
+</body>
+</html>

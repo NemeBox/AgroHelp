@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Us | AgroHelp</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800&family=Poppins:wght@900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        /* Ensures the fixed navbar doesn't cover the contact section */
+        .contact-page {
+            padding-top: 100px;
+            padding-bottom: 60px;
+        }
+    </style>
+</head>
+<body>
+
+    <header id="navbar">
+        <div class="container nav-container">
+            <div class="logo">
+                <span class="logo-text">AgroHelp</span>
+            </div>
+            <nav class="desktop-nav">
+                <ul class="nav-links">
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="service.html">Services</a></li>
+                    <li><a href="contact.html" class="active">Contact</a></li>
+                </ul>
+            </nav>
+            <div class="nav-actions" id="navActions">
+                <div id="authButtons">
+                    <a href="auth_cus.html" class="cta-btn">Sign In</a>
+                </div>
+                <div id="loggedInInfo" style="display: none; align-items: center; gap: 10px;">
+                    <div class="profile-menu-container">
+                        <img id="profilePic" class="profile-pic-circle" alt="User Profile">
+                        <div id="profileDropdownContent" class="profile-dropdown-content">
+                            <a href="#" class="cta-btn logout-btn">Logout</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="contact-page">
+        <div class="contact-container">
+            
+            <div class="contact-info">
+                <div class="info-content">
+                    <div class="logo-text">AgroHelp</div>
+                    <h1>How can we help you <span>today?</span></h1>
+                    <p>Have a question about renting equipment or expert services? Drop us a message.</p>
+                    
+                    <div class="contact-cards">
+                        <div class="card">
+                            <i class="fa-solid fa-envelope"></i>
+                            <span>support@agrohelp.com</span>
+                        </div>
+                        <div class="card">
+                            <i class="fa-solid fa-location-dot"></i>
+                            <span>123 Agri Lane, Harvest City</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="contact-form-box">
+                <h2>Send us a Query</h2>
+                <form id="queryForm">
+                    <div class="input-group">
+                        <i class="fa-solid fa-user"></i>
+                        <input type="text" placeholder="Your Name" required>
+                    </div>
+
+                    <div class="input-group">
+                        <i class="fa-solid fa-envelope"></i>
+                        <input type="email" placeholder="Email Address" required>
+                    </div>
+
+                    <div class="input-group">
+                        <i class="fa-solid fa-circle-question"></i>
+                        <select required>
+                            <option value="" disabled selected>Select Category</option>
+                            <option value="rental">Equipment Rental</option>
+                            <option value="expert">Expert Advice</option>
+                            <option value="technical">Technical Support</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+
+                    <div class="input-group">
+                        <textarea placeholder="Write your query here..." rows="5" required></textarea>
+                    </div>
+
+                    <button type="submit" class="btn-contact">Send Message</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <footer class="main-footer">
+        <div class="container footer-grid">
+            <div class="footer-brand">
+                <h2 class="logo-text">AgroHelp</h2>
+                <p>Empowering the agricultural ecosystem through shared resources.</p>
+                <div class="footer-socials">
+                    <a href="#" aria-label="Facebook"><i class="fa-brands fa-facebook-f"></i></a>
+                    <a href="#" aria-label="Twitter"><i class="fa-brands fa-x-twitter"></i></a>
+                    <a href="#" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
+                    <a href="#" aria-label="LinkedIn"><i class="fa-brands fa-linkedin-in"></i></a>
+                </div>
+            </div>
+
+            <div class="footer-links">
+                <h4>Quick Links</h4>
+                <ul>
+                    <li><a href="index.html#home">Home</a></li>
+                    <li><a href="index.html#about">Information</a></li>
+                    <li><a href="service.html">Services</a></li>
+                    <li><a href="contact.html">Contact Us</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-contact">
+                <h4>Contact Us</h4>
+                <p><i class="fa-solid fa-envelope"></i> support@agrohelp.com</p>
+                <p><i class="fa-solid fa-location-dot"></i> Mumbai, Maharashtra, India</p>
+            </div>
+        </div>
+
+        <div class="footer-bottom center">
+            <div class="container">
+                <p>&copy; 2026 AgroHelp. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+</body>
+<script src="navbar.js"></script>
+</html>
