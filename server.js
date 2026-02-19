@@ -1,38 +1,33 @@
+require('dotenv').config();
 const express = require('express');
-const dotenv = require('dotenv');
+const cors = require('cors');
 const connectDB = require('./db');
-const authRoutes = require('./auth'); // Corrected path for auth.js
+const userRoutes = require('./userRoutes');
+const productRoutes = require('./productRoutes');
 
-// Load environment variables
-dotenv.config();
-
-// On Netlify, the connection is handled by the serverless function wrapper
-
+// express app
 const app = express();
 
-// Middleware to parse JSON bodies
-app.use(express.json());
+// middleware
+app.use(cors());
+app.use(express.json()); // to parse json from the request body
 
-// CORS (Cross-Origin Resource Sharing) - IMPORTANT for frontend to talk to backend
-// In a real application, you'd restrict this to your frontend's domain.
 app.use((req, res, next) => {
-    res.setHeader('Access-Control-Allow-Origin', '*'); // Allow all origins for development
-    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
-    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-    next();
+  console.log(req.path, req.method);
+  next();
 });
 
-// Auth routes
-app.use('/api/auth', authRoutes);
+// --- Routes ---
+// Public routes for authentication
+app.use('/api/user', userRoutes);
 
-// Export the app for the serverless function to use
-module.exports = app;
+// Product routes (contains both public and protected routes)
+app.use('/api/products', productRoutes);
 
-// Start the server only when this file is run directly (for local development)
-if (require.main === module) {
-  // Connect to MongoDB for local development
-  connectDB().then(() => {
-    const PORT = process.env.PORT || 5000;
-    app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
-  });
-}
+// connect to db, then start server
+connectDB().then(() => {
+    // listen for requests
+    app.listen(process.env.PORT, () => {
+        console.log('Server is listening on port', process.env.PORT);
+    });
+});

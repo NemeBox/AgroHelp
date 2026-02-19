@@ -183,7 +183,7 @@
             console.log('Frontend sending (provider):', { name, email, password, isRegisterMode });
 
             if (isRegisterMode) { // Use the global isRegisterMode variable
-                url = 'http://localhost:5000/api/auth/provider/register';
+                url = 'http://localhost:4000/api/user/signup/expert';
                 body = { name, email, password };
                 // Client-side validation for registration
                 if (!name.trim()) {
@@ -192,7 +192,7 @@
                     return; // Stop form submission
                 }
             } else {
-                url = 'http://localhost:5000/api/auth/provider/login';
+                url = 'http://localhost:4000/api/user/login/expert';
                 body = { email, password };
             }
 
@@ -219,11 +219,11 @@
                     }
                     window.location.href = 'index.html'; // Redirect to homepage or provider dashboard
                 } else {
-                    alert(`Error: ${data.message || 'Something went wrong'}`);
+                    alert(`Error: ${data.error || 'Something went wrong'}`);
                 }
             } catch (error) {
                 console.error('Network error:', error);
-                alert('Network error. Please try again.');
+                alert('Network error. Please check if the server is running and try again.');
             }
         });
     </script>

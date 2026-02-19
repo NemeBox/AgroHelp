@@ -149,7 +149,6 @@ body {
 
 /* Grid Layouts */
 .why-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2.5rem; margin-top: 5rem; }
-.service-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(380px, 1fr)); gap: 3rem; margin-top: 5rem; }
 
 /* Base Card Styles */
 .why-card, .service-card { 
@@ -175,7 +174,7 @@ body {
 /* Service Section Layout */
 .service-grid { 
     display: grid; 
-    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); 
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); 
     gap: 2.5rem; 
     margin-top: 4rem; 
 }
@@ -623,9 +622,7 @@ body {
 .input-group i {
     position: absolute;
     left: 20px;
-    top: 50%;
-    transform: translateY(-50%);
-    color: var(--deep-sage);
+    top: : var(--deep-sage);
 }
 
 .input-group input {
@@ -639,6 +636,12 @@ body {
     font-weight: 500;
     color: var(--text-dark);
     transition: all 0.3s ease;
+}
+.input-group textarea {
+    width: 100%;
+    padding: 18px 18px 18px 55px !important;
+    resize: vertical;
+    min-height: 80px;
 }
 
 /* Red Validation stays red until valid */

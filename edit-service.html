@@ -3,11 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AgroHelp | Create Service</title>
+    <title>AgroHelp | Edit Service</title>
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
-        /* Re-use auth page styles for consistency */
         .auth-section {
             padding: 120px 20px 80px 20px;
             min-height: 100vh;
@@ -19,7 +18,6 @@
 </head>
 <body>
     <header id="navbar">
-        <!-- Assuming you have a standard navbar here -->
         <div class="container nav-container">
             <div class="logo">
                 <span class="logo-text">AgroHelp</span>
@@ -52,12 +50,12 @@
             <div class="auth-visual">
                 <div class="visual-content">
                     <div class="logo-text">AgroHelp</div>
-                    <h1>Offer Your Expertise.<br><span>List a New Service.</span></h1>
+                    <h1>Refine Your Offering.<br><span>Update Your Service.</span></h1>
                 </div>
             </div>
             <div class="auth-form-box">
-                <h2 id="formTitle">Service Details</h2>
-                <form id="create-service-form">
+                <h2 id="formTitle">Edit Service Details</h2>
+                <form id="edit-service-form">
                     <div class="input-group">
                         <i class="fa-solid fa-tag"></i>
                         <input type="text" id="serviceName" name="name" placeholder="Service/Product Name" required>
@@ -65,7 +63,7 @@
                     <div class="input-group">
                         <i class="fa-solid fa-layer-group"></i>
                         <select id="serviceCategory" name="category" required>
-                            <option value="" disabled selected>Select a Category</option>
+                            <option value="" disabled>Select a Category</option>
                             <option value="Tool">Tool</option>
                             <option value="Fertilizer">Fertilizer</option>
                             <option value="Consultancy">Consultancy</option>
@@ -86,69 +84,64 @@
                         <i class="fa-solid fa-align-left"></i>
                         <textarea id="serviceDescription" name="description" placeholder="Service Description (optional)" rows="3"></textarea>
                     </div>
-                    <button type="submit" class="btn-auth">Create Service</button>
+                    <button type="submit" class="btn-auth">Update Service</button>
                 </form>
             </div>
         </div>
         <div id="auth-check-message" style="display: none; text-align: center; padding: 40px;"></div>
     </main>
 
-    <footer class="main-footer">
-        <div class="container footer-grid">
-            <div class="footer-brand">
-                <h2 class="logo-text">AgroHelp</h2>
-                <p>Empowering the agricultural ecosystem through shared resources.</p>
-                <div class="footer-socials">
-                    <a href="#" aria-label="Facebook"><i class="fa-brands fa-facebook-f"></i></a>
-                    <a href="#" aria-label="Twitter"><i class="fa-brands fa-x-twitter"></i></a>
-                    <a href="#" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
-                    <a href="#" aria-label="LinkedIn"><i class="fa-brands fa-linkedin-in"></i></a>
-                </div>
-            </div>
-            <div class="footer-links">
-                <h4>Quick Links</h4>
-                <ul>
-                    <li><a href="index.html">Home</a></li>
-                    <li><a href="service.html">Services</a></li>
-                    <li><a href="contact.html">Contact Us</a></li>
-                </ul>
-            </div>
-            <div class="footer-contact">
-                <h4>Contact Us</h4>
-                <p><i class="fa-solid fa-envelope"></i> support@agrohelp.com</p>
-                <p><i class="fa-solid fa-location-dot"></i> Mumbai, Maharashtra, India</p>
-            </div>
-        </div>
-        <div class="footer-bottom center">
-            <div class="container">
-                <p>&copy; 2026 AgroHelp. All rights reserved.</p>
-            </div>
-        </div>
-    </footer>
-
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
+        document.addEventListener('DOMContentLoaded', async () => {
             const token = localStorage.getItem('agrohelp_token');
             const userRole = localStorage.getItem('agrohelp_user_role');
             const formContainer = document.getElementById('service-form-container');
             const authMessage = document.getElementById('auth-check-message');
+            const form = document.getElementById('edit-service-form');
+
+            const urlParams = new URLSearchParams(window.location.search);
+            const serviceId = urlParams.get('id');
 
             if (!token || userRole !== 'expert') {
                 formContainer.style.display = 'none';
                 authMessage.style.display = 'block';
-                authMessage.innerHTML = `
-                    <h2>Access Denied</h2>
-                    <p>You must be logged in as a service provider to create a service.</p>
-                    <a href="auth_pro.html" class="cta-btn">Login as Provider</a>
-                `;
+                authMessage.innerHTML = `<h2>Access Denied</h2><p>You must be logged in as a service provider to edit a service.</p><a href="auth_pro.html" class="cta-btn">Login as Provider</a>`;
                 return;
             }
 
-            const form = document.getElementById('create-service-form');
+            if (!serviceId) {
+                formContainer.style.display = 'none';
+                authMessage.style.display = 'block';
+                authMessage.innerHTML = `<h2>Error</h2><p>No service ID provided.</p><a href="dashboard.html" class="cta-btn">Go to Dashboard</a>`;
+                return;
+            }
+
+            // Fetch existing service data
+            try {
+                const res = await fetch(`http://localhost:4000/api/products/${serviceId}`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const service = await res.json();
+
+                if (!res.ok) throw new Error(service.error);
+
+                // Populate the form
+                document.getElementById('serviceName').value = service.name;
+                document.getElementById('serviceCategory').value = service.category;
+                document.getElementById('servicePrice').value = service.price;
+                document.getElementById('serviceStock').value = service.stock;
+                document.getElementById('serviceDescription').value = service.description || '';
+
+            } catch (error) {
+                formContainer.style.display = 'none';
+                authMessage.style.display = 'block';
+                authMessage.innerHTML = `<h2>Error</h2><p>Could not load service data: ${error.message}</p><a href="dashboard.html" class="cta-btn">Go to Dashboard</a>`;
+            }
+
+            // Handle form submission
             form.addEventListener('submit', async (event) => {
                 event.preventDefault();
-
-                const serviceData = {
+                const updatedData = {
                     name: document.getElementById('serviceName').value,
                     category: document.getElementById('serviceCategory').value,
                     price: parseFloat(document.getElementById('servicePrice').value),
@@ -156,18 +149,18 @@
                     description: document.getElementById('serviceDescription').value
                 };
 
-                const response = await fetch('http://localhost:4000/api/products', {
-                    method: 'POST',
+                const response = await fetch(`http://localhost:4000/api/products/${serviceId}`, {
+                    method: 'PATCH',
                     headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
-                    body: JSON.stringify(serviceData)
+                    body: JSON.stringify(updatedData)
                 });
 
                 const data = await response.json();
                 if (response.ok) {
-                    alert('Service created successfully!');
-                    window.location.href = 'service.html'; // Or a provider dashboard
+                    alert('Service updated successfully!');
+                    window.location.href = 'dashboard.html';
                 } else {
-                    alert(`Error: ${data.error || 'Failed to create service.'}`);
+                    alert(`Error: ${data.error || 'Failed to update service.'}`);
                 }
             });
         });

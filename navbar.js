@@ -85,12 +85,24 @@ function updateAuthHeader() {
         }
 
         // Add "Create Service" link for providers
-        if (userRole === 'provider') {
-            const createServiceLink = document.createElement('a');
-            createServiceLink.href = 'create-service.html'; // Link to the new page
-            createServiceLink.classList.add('cta-btn');
-            createServiceLink.textContent = 'Create Service';
-            profileDropdownContent.prepend(createServiceLink); // Add it before the logout button
+        if (userRole === 'expert') {
+            // Add "Create Service" link if it doesn't exist
+            // Check if the link already exists to prevent duplicates on page navigation
+            if (!profileDropdownContent.querySelector('a[href="create-service.html"]')) {
+                const createServiceLink = document.createElement('a');
+                createServiceLink.href = 'create-service.html'; // Link to the new page
+                createServiceLink.classList.add('cta-btn');
+                createServiceLink.textContent = 'Create Service';
+                profileDropdownContent.prepend(createServiceLink); // Add it before the logout button
+            }
+            // Add "My Dashboard" link if it doesn't exist
+            if (!profileDropdownContent.querySelector('a[href="dashboard.html"]')) {
+                const dashboardLink = document.createElement('a');
+                dashboardLink.href = 'dashboard.html';
+                dashboardLink.classList.add('cta-btn');
+                dashboardLink.textContent = 'My Dashboard';
+                profileDropdownContent.prepend(dashboardLink);
+            }
         }
 
         // Add click listener to the profile menu container to toggle dropdown

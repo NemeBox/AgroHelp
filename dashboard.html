@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AgroHelp - Our Services</title>
+    <title>AgroHelp | My Dashboard</title>
     <link rel="stylesheet" href="styles.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
@@ -29,7 +29,6 @@
                     <div class="profile-menu-container">
                         <img id="profilePic" class="profile-pic-circle" alt="User Profile">
                         <div id="profileDropdownContent" class="profile-dropdown-content">
-                            <!-- Links will be dynamically added here by navbar.js -->
                             <a href="#" class="cta-btn logout-btn">Logout</a>
                         </div>
                     </div>
@@ -42,13 +41,15 @@
         <section class="services" id="services-list">
             <div class="container">
                 <div class="section-header center">
-                    <span class="section-label">Marketplace</span>
-                    <h2 class="section-title">All Available Services</h2>
+                    <span class="section-label">Provider Dashboard</span>
+                    <h2 class="section-title">My Services</h2>
                 </div>
                 
-                <div class="service-grid" id="all-services-grid">
-                    <!-- All services will be dynamically inserted here -->
+                <div class="service-grid" id="my-services-grid">
+                    <!-- Provider's services will be dynamically inserted here -->
                 </div>
+
+                <div id="auth-check-message" style="display: none; text-align: center;"></div>
             </div>
         </section>
     </main>
@@ -91,6 +92,6 @@
     </footer>
 
     <script src="navbar.js"></script>
-    <script src="services.js"></script>
+    <script src="dashboard.js"></script>
 </body>
 </html>
