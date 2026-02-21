@@ -2,7 +2,7 @@ require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const userRoutes = require('./userRoutes');
-const productRoutes = require('./productRoutes');
+// const productRoutes = require('./productRoutes'); // Temporarily disabled for debugging
 
 // express app
 const app = express();
@@ -20,8 +20,13 @@ app.use((req, res, next) => {
 // Public routes for authentication
 app.use('/user', userRoutes);
 
-// Product routes (contains both public and protected routes)
-app.use('/products', productRoutes);
+// Temporarily disable product routes for debugging
+// app.use('/products', productRoutes);
+
+// Add a catch-all route for debugging unmatched API calls
+app.use('*', (req, res) => {
+  res.status(404).json({ error: `API route not found: ${req.method} ${req.originalUrl}` });
+});
 
 // Export the app for the serverless function
 module.exports = app;
