@@ -1,7 +1,6 @@
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
-const connectDB = require('./db');
 const userRoutes = require('./userRoutes');
 const productRoutes = require('./productRoutes');
 
@@ -23,9 +22,6 @@ app.use('/api/user', userRoutes);
 
 // Product routes (contains both public and protected routes)
 app.use('/api/products', productRoutes);
-
-// Establish DB connection
-connectDB();
 
 // Export the app for the serverless function
 module.exports = app;
