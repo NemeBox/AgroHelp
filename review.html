@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AgroHelp | Leave a Review</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        .auth-section {
+            padding: 120px 20px 80px 20px;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .auth-container { height: auto; }
+        .auth-form-box { justify-content: flex-start; padding: 50px 70px; }
+        .star-rating {
+            display: flex;
+            flex-direction: row-reverse;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+        .star-rating input[type="radio"] { display: none; }
+        .star-rating label {
+            font-size: 2.5rem;
+            color: #e0e0e0;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+        .star-rating label:before { content: '\f005'; font-family: 'Font Awesome 6 Free'; font-weight: 900; }
+        .star-rating input[type="radio"]:checked ~ label,
+        .star-rating label:hover,
+        .star-rating label:hover ~ label {
+            color: #f39c12;
+        }
+    </style>
+</head>
+<body>
+    <header id="navbar">
+        <div class="container nav-container">
+            <div class="logo"><span class="logo-text">AgroHelp</span></div>
+            <nav class="desktop-nav">
+                <ul class="nav-links">
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="service.html">Services</a></li>
+                </ul>
+            </nav>
+            <div class="nav-actions" id="navActions">
+                <div id="authButtons" style="display: none;"><a href="auth_cus.html" class="cta-btn">Sign In</a></div>
+                <div id="loggedInInfo" style="display: flex; align-items: center; gap: 10px;">
+                    <div class="profile-menu-container">
+                        <img id="profilePic" class="profile-pic-circle" alt="User Profile">
+                        <div id="profileDropdownContent" class="profile-dropdown-content">
+                            <a href="#" class="cta-btn logout-btn">Logout</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="auth-section">
+        <div id="auth-check-message" style="display: none; text-align: center; padding: 40px;"></div>
+        <div class="auth-container" id="review-form-container">
+            <div class="auth-visual">
+                <div class="visual-content">
+                    <div class="logo-text">AgroHelp</div>
+                    <h1>Share Your Experience.<br><span>Help the community grow.</span></h1>
+                </div>
+            </div>
+            <div class="auth-form-box">
+                <h2 id="formTitle">Leave a Review</h2>
+                <p id="service-name-for-review" style="text-align: center; color: var(--text-muted); margin-bottom: 2rem;"></p>
+                <form id="review-form">
+                    <div class="star-rating">
+                        <input type="radio" id="star5" name="rating" value="5" required/><label for="star5" title="5 stars"></label>
+                        <input type="radio" id="star4" name="rating" value="4" /><label for="star4" title="4 stars"></label>
+                        <input type="radio" id="star3" name="rating" value="3" /><label for="star3" title="3 stars"></label>
+                        <input type="radio" id="star2" name="rating" value="2" /><label for="star2" title="2 stars"></label>
+                        <input type="radio" id="star1" name="rating" value="1" /><label for="star1" title="1 star"></label>
+                    </div>
+                    <div class="input-group">
+                        <i class="fa-solid fa-comment-dots"></i>
+                        <textarea name="comment" placeholder="Share details of your experience..." rows="4" required></textarea>
+                    </div>
+                    <button type="submit" class="btn-auth">Submit Review</button>
+                </form>
+            </div>
+        </div>
+    </main>
+
+    <footer class="main-footer">
+        <div class="container footer-bottom center">
+            <p>&copy; 2026 AgroHelp. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="navbar.js"></script>
+    <script src="review.js"></script>
+</body>
+</html>

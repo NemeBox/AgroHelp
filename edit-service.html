@@ -58,55 +58,57 @@
         </div>
     </header>
 
-    <main class="auth-section">
-        <div id="auth-check-message" style="display: none; text-align: center; padding: 40px;"></div>
-        <div class="auth-container" id="service-form-container">
-            <div class="auth-visual">
-                <div class="visual-content">
-                    <div class="logo-text">AgroHelp</div>
-                    <h1>Refine Your Offering.<br><span>Update Service Details.</span></h1>
+    <main>
+        <section class="auth-section">
+            <div id="auth-check-message" style="display: none; text-align: center; padding: 40px;"></div>
+            <div class="auth-container" id="service-form-container">
+                <div class="auth-visual">
+                    <div class="visual-content">
+                        <div class="logo-text">AgroHelp</div>
+                        <h1>Refine Your Offering.<br><span>Update Service Details.</span></h1>
+                    </div>
+                </div>
+                <div class="auth-form-box">
+                    <h2 id="formTitle">Edit Service</h2>
+                    <form id="edit-service-form">
+                        <div class="input-group">
+                            <i class="fa-solid fa-tag"></i>
+                            <input type="text" name="name" placeholder="Service/Product Name" required>
+                        </div>
+                        <div class="input-group">
+                            <i class="fa-solid fa-layer-group"></i>
+                            <select name="category" required>
+                                <option value="" disabled>Select a Category</option>
+                                <option value="Tool">Tool</option>
+                                <option value="Fertilizer">Fertilizer</option>
+                                <option value="Consultancy">Consultancy</option>
+                                <option value="Soil Testing">Soil Testing</option>
+                                <option value="Heavy Machinery">Heavy Machinery</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </div>
+                        <div class="input-group">
+                            <i class="fa-solid fa-indian-rupee-sign"></i>
+                            <input type="number" name="price" placeholder="Price" required min="0" step="0.01">
+                        </div>
+                        <div class="input-group">
+                            <i class="fa-solid fa-boxes-stacked"></i>
+                            <input type="number" name="stock" placeholder="Stock/Availability" min="0">
+                        </div>
+                        <div class="input-group">
+                            <i class="fa-solid fa-align-left"></i>
+                            <textarea name="description" placeholder="Service Description" rows="3"></textarea>
+                        </div>
+                        <div class="input-group">
+                            <i class="fa-solid fa-image"></i>
+                            <input type="url" name="imageUrl" placeholder="Image URL">
+                        </div>
+                        <button type="submit" class="btn-auth">Save Changes</button>
+                        <button type="button" id="delete-service-btn" class="btn-auth delete-btn">Delete Service</button>
+                    </form>
                 </div>
             </div>
-            <div class="auth-form-box">
-                <h2 id="formTitle">Edit Service</h2>
-                <form id="edit-service-form">
-                    <div class="input-group">
-                        <i class="fa-solid fa-tag"></i>
-                        <input type="text" name="name" placeholder="Service/Product Name" required>
-                    </div>
-                    <div class="input-group">
-                        <i class="fa-solid fa-layer-group"></i>
-                        <select name="category" required>
-                            <option value="" disabled>Select a Category</option>
-                            <option value="Tool">Tool</option>
-                            <option value="Fertilizer">Fertilizer</option>
-                            <option value="Consultancy">Consultancy</option>
-                            <option value="Soil Testing">Soil Testing</option>
-                            <option value="Heavy Machinery">Heavy Machinery</option>
-                            <option value="Other">Other</option>
-                        </select>
-                    </div>
-                    <div class="input-group">
-                        <i class="fa-solid fa-indian-rupee-sign"></i>
-                        <input type="number" name="price" placeholder="Price" required min="0" step="0.01">
-                    </div>
-                    <div class="input-group">
-                        <i class="fa-solid fa-boxes-stacked"></i>
-                        <input type="number" name="stock" placeholder="Stock/Availability" min="0">
-                    </div>
-                    <div class="input-group">
-                        <i class="fa-solid fa-align-left"></i>
-                        <textarea name="description" placeholder="Service Description" rows="3"></textarea>
-                    </div>
-                    <div class="input-group">
-                        <i class="fa-solid fa-image"></i>
-                        <input type="url" name="imageUrl" placeholder="Image URL">
-                    </div>
-                    <button type="submit" class="btn-auth">Save Changes</button>
-                    <button type="button" id="delete-service-btn" class="btn-auth delete-btn">Delete Service</button>
-                </form>
-            </div>
-        </div>
+        </section>
     </main>
 
     <footer class="main-footer">

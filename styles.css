@@ -1,7 +1,7 @@
 :root {
     --pastel-green: #e8f5e9;
-    --sage-green: #81c784;
-    --deep-sage: #2e7d32;
+    --sage-green: #60a960; /* A more modern, less saturated green */
+    --deep-sage: #2e4d2e; /* A deeper, more professional forest green */
     --white: #ffffff;
     --cream: #fffdfa;
     --text-dark: #1b2d1b;
@@ -478,7 +478,7 @@ body {
 
 /* --- Root Variables --- */
 :root {
-    --deep-sage: #2e4d2e;
+    /* --deep-sage is already defined, this is redundant */
     --light-sage: #c5e1c5; /* Connected, soft sage for the motto */
     --pastel-green: #e8f5e9;
     --error-red: #e74c3c;
@@ -699,7 +699,7 @@ body {
 -------------------------------------------- */
 
 :root {
-    --deep-sage: #1b3d1e;    
+    /* --deep-sage is already defined, this is redundant */
     --light-sage: #c5e1c5;   
     --pastel-green: #e8f5e9;
     --error-red: #e74c3c;
@@ -917,7 +917,7 @@ body {
 /* --- AgroHelp Contact Page Styles --- */
 
 :root {
-    --deep-sage: #2e4d2e;
+    /* --deep-sage is already defined, this is redundant */
     --light-sage: #c5e1c5;
     --text-dark: #1a241b;
 }

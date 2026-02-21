@@ -50,34 +50,36 @@
         </div>
     </header>
 
-    <main class="auth-section">
-        <div id="auth-check-message" style="display: none; text-align: center; padding: 40px;"></div>
-        <div class="auth-container" id="account-form-container">
-            <div class="auth-visual">
-                <div class="visual-content">
-                    <div class="logo-text">AgroHelp</div>
-                    <h1>Manage Your Profile.<br><span>Keep your details up to date.</span></h1>
+    <main>
+        <section class="auth-section">
+            <div id="auth-check-message" style="display: none; text-align: center; padding: 40px;"></div>
+            <div class="auth-container" id="account-form-container">
+                <div class="auth-visual">
+                    <div class="visual-content">
+                        <div class="logo-text">AgroHelp</div>
+                        <h1>Manage Your Profile.<br><span>Keep your details up to date.</span></h1>
+                    </div>
+                </div>
+                <div class="auth-form-box">
+                    <h2 id="formTitle">Account Settings</h2>
+                    <form id="account-settings-form">
+                        <div class="input-group">
+                            <i class="fa-solid fa-user"></i>
+                            <input type="text" name="name" placeholder="Full Name or Business Name" required>
+                        </div>
+                        <div class="input-group">
+                            <i class="fa-solid fa-envelope"></i>
+                            <input type="email" name="email" placeholder="Email Address" required>
+                        </div>
+                        <div class="input-group">
+                            <i class="fa-solid fa-phone"></i>
+                            <input type="tel" name="phone" placeholder="Phone Number" required maxlength="10">
+                        </div>
+                        <button type="submit" class="btn-auth">Save Changes</button>
+                    </form>
                 </div>
             </div>
-            <div class="auth-form-box">
-                <h2 id="formTitle">Account Settings</h2>
-                <form id="account-settings-form">
-                    <div class="input-group">
-                        <i class="fa-solid fa-user"></i>
-                        <input type="text" name="name" placeholder="Full Name or Business Name" required>
-                    </div>
-                    <div class="input-group">
-                        <i class="fa-solid fa-envelope"></i>
-                        <input type="email" name="email" placeholder="Email Address" required>
-                    </div>
-                    <div class="input-group">
-                        <i class="fa-solid fa-phone"></i>
-                        <input type="tel" name="phone" placeholder="Phone Number" required maxlength="10">
-                    </div>
-                    <button type="submit" class="btn-auth">Save Changes</button>
-                </form>
-            </div>
-        </div>
+        </section>
     </main>
 
     <footer class="main-footer">

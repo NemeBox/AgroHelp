@@ -92,11 +92,43 @@ function handleBookingAction(event) {
     const target = event.target;
     const bookingId = target.dataset.bookingId;
 
-    if (!bookingId || !(target.classList.contains('accept-btn') || target.classList.contains('decline-btn'))) {
-        return; // Exit if not a booking action button
-    }
+    if (!bookingId) return;
 
-    const newStatus = target.classList.contains('accept-btn') ? 'Confirmed' : 'Declined';
+    let newStatus = '';
+    let alertMessage = '';
+
+    if (target.classList.contains('accept-btn')) {
+        newStatus = 'Confirmed';
+        alertMessage = 'Booking has been confirmed.';
+    } else if (target.classList.contains('decline-btn')) {
+        newStatus = 'Declined';
+        alertMessage = 'Booking has been declined.';
+    } else if (target.classList.contains('complete-service-btn')) {
+        newStatus = 'Awaiting Customer Confirmation';
+        alertMessage = 'Service marked as complete. Waiting for customer to confirm.';
+    } else if (target.classList.contains('confirm-payment-btn')) {
+        if (confirm('Please confirm that you have received the payment for this service.')) {
+            newStatus = 'Completed';
+            alertMessage = 'Payment confirmed. Booking is now complete.';
+        } else {
+            return; // User cancelled the confirmation
+        }
+    } else if (target.classList.contains('view-review-btn')) {
+        const detailsId = `review-details-${bookingId}`;
+        const detailsElement = document.getElementById(detailsId);
+        if (detailsElement) {
+            if (detailsElement.style.display === 'none') {
+                detailsElement.style.display = 'block';
+                target.textContent = 'Hide Details';
+            } else {
+                detailsElement.style.display = 'none';
+                target.textContent = 'View Details';
+            }
+        }
+        return; // Return early, no state change
+    } else {
+        return; // Not a relevant button click
+    }
 
     let allBookings = JSON.parse(localStorage.getItem('agrohelp_bookings')) || [];
     const bookingIndex = allBookings.findIndex(b => b.bookingId === bookingId);
@@ -104,7 +136,6 @@ function handleBookingAction(event) {
     if (bookingIndex > -1) {
         allBookings[bookingIndex].status = newStatus;
 
-        // Add provider's phone number to the booking object upon confirmation
         if (newStatus === 'Confirmed') {
             const providerPhone = localStorage.getItem('agrohelp_user_phone');
             if (providerPhone) {
@@ -114,15 +145,21 @@ function handleBookingAction(event) {
 
         localStorage.setItem('agrohelp_bookings', JSON.stringify(allBookings));
 
-        // Dynamically update the card without a full page reload
-        const card = target.closest('.booking-card');
-        const service = (JSON.parse(localStorage.getItem('agrohelp_services')) || []).find(s => s.id === allBookings[bookingIndex].serviceId);
-        if (card && service) {
-            card.outerHTML = createBookingCardForProvider(allBookings[bookingIndex], service);
+        if (alertMessage) {
+            alert(alertMessage);
         }
-        alert(`Booking has been ${newStatus.toLowerCase()}.`);
+
+        loadProviderBookings();
     }
 }
+
+const renderStars = (rating) => {
+    let stars = '';
+    for (let i = 1; i <= 5; i++) {
+        stars += `<i class="fa-solid fa-star" style="color: ${i <= rating ? '#f39c12' : '#e0e0e0'};"></i>`;
+    }
+    return stars;
+};
 
 function createBookingCardForProvider(booking, service) {
     if (!service) return ''; // Don't render if service not found
@@ -141,7 +178,25 @@ function createBookingCardForProvider(booking, service) {
         requestedDateTimeDisplay = `On ${new Date(booking.bookingDate).toLocaleDateString('en-GB')}`;
     }
 
-    let statusDisplay = '';
+    let reviewDisplay = '';
+    if (booking.status === 'Completed' && booking.reviewLeft) {
+        const allReviews = JSON.parse(localStorage.getItem('agrohelp_reviews')) || [];
+        const review = allReviews.find(r => r.bookingId === booking.bookingId);
+        if (review) {
+            reviewDisplay = `
+                <div class="review-summary" style="margin-top: 1rem; border-top: 1px solid #eee; padding-top: 1rem;">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <span style="font-weight: 600;">Customer Review:</span>
+                        <button class="cta-btn-small view-review-btn" data-booking-id="${booking.bookingId}" style="padding: 0.3rem 0.8rem; font-size: 0.8rem;">View Details</button>
+                    </div>
+                    <div class="star-rating-display" style="font-size: 1.1rem; margin-top: 0.5rem;">${renderStars(review.rating)}</div>
+                    <p class="review-comment-details" id="review-details-${booking.bookingId}" style="display: none; margin-top: 10px; padding: 10px; background: #f9f9f9; border-radius: 8px; font-style: italic;">"${review.comment}"</p>
+                </div>
+            `;
+        }
+    }
+
+    let statusDisplay;
     if (booking.status === 'Pending') {
         statusDisplay = `
             <div class="booking-actions" style="display: flex; gap: 10px;">
@@ -149,8 +204,18 @@ function createBookingCardForProvider(booking, service) {
                 <button class="cta-btn-small decline-btn" data-booking-id="${booking.bookingId}" style="background-color: #c0392b;">Decline</button>
             </div>
         `;
+    } else if (booking.status === 'Confirmed') {
+        statusDisplay = `<button class="cta-btn-small complete-service-btn" data-booking-id="${booking.bookingId}" style="background-color: #2980b9;">Mark as Complete</button>`;
+    } else if (booking.status === 'Awaiting Customer Confirmation') {
+        statusDisplay = `<span class="booking-status" style="color: var(--text-muted); font-weight: 600;">Waiting for Customer</span>`;
+    } else if (booking.status === 'Awaiting Payment Confirmation') {
+        statusDisplay = `<button class="cta-btn-small confirm-payment-btn" data-booking-id="${booking.bookingId}">Confirm Payment</button>`;
+    } else if (booking.status === 'Completed') {
+        const statusColor = 'var(--deep-sage)';
+        statusDisplay = `<span class="booking-status" style="color: ${statusColor}; font-weight: 600;">Status: Completed</span>`;
     } else {
-        const statusColor = booking.status === 'Confirmed' ? 'var(--deep-sage)' : '#c0392b';
+        // For 'Declined' status
+        const statusColor = '#c0392b';
         statusDisplay = `<span class="booking-status" style="color: ${statusColor}; font-weight: 600;">Status: ${booking.status}</span>`;
     }
 
@@ -159,11 +224,13 @@ function createBookingCardForProvider(booking, service) {
             <div class="card-body">
                 <h3 class="card-title">Booking for: ${service.name}</h3>
                 <p class="card-provider">Booked by: ${booking.customerName}</p>
-                <p class="card-description">Requested for: ${requestedDateTimeDisplay}</p>
+                <p class="card-description" style="margin-bottom: 0.5rem;">Requested for: ${requestedDateTimeDisplay}</p>
+                <p class="card-description" style="font-weight: 600;">Payment Method: ${booking.paymentMethod || 'Not specified'}</p>
                 <div class="card-footer">
                     <span class="card-price">Service Price: ₹${parseFloat(service.price).toFixed(2)}</span>
                     ${statusDisplay}
                 </div>
+                ${reviewDisplay}
             </div>
         </div>
     `;

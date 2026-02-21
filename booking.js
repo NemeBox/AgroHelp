@@ -73,16 +73,40 @@ document.addEventListener('DOMContentLoaded', () => {
             </div>
             <div class="input-group">
                 <i class="fa-solid fa-clock"></i>
-                <input type="time" id="bookingTime" name="bookingTime" min="09:00" max="20:00">
+                <select id="bookingTime" name="bookingTime">
+                    <!-- Time options will be populated here -->
+                </select>
+            </div>
+            <h3 style="margin-top: 2rem;">Select Payment Method</h3>
+            <div class="input-group" style="margin-top: 1rem;">
+                <i class="fa-solid fa-money-bill-wave"></i>
+                <select id="paymentMethod" name="paymentMethod" required>
+                    <option value="Cash on Service" selected>Cash on Service</option>
+                </select>
             </div>
         </div>
         <p style="margin-top: 1.5rem; font-size: 1.1rem;">Click "Confirm Booking" to send your request.</p>
     `;
 
+    // Populate time options to strictly control user selection
+    const timeSelect = document.getElementById('bookingTime');
+    if (timeSelect) {
+        let timeOptionsHTML = '<option value="">Select a time (optional)</option>';
+        for (let i = 9; i <= 20; i++) { // 9 AM to 8 PM (20:00)
+            const hour24 = i.toString().padStart(2, '0');
+            const hour12 = i > 12 ? i - 12 : i;
+            const ampm = i >= 12 ? 'PM' : 'AM';
+            const displayTime = `${hour12}:00 ${ampm}`;
+            timeOptionsHTML += `<option value="${hour24}:00">${displayTime}</option>`;
+        }
+        timeSelect.innerHTML = timeOptionsHTML;
+    }
+
     // Handle booking confirmation
     confirmBookingBtn.addEventListener('click', () => {
         const requestedDate = document.getElementById('bookingDate').value;
         const requestedTime = document.getElementById('bookingTime').value;
+        const paymentMethod = document.getElementById('paymentMethod').value;
 
         if (!requestedDate) {
             alert('Please select a preferred date for your booking.');
@@ -97,7 +121,8 @@ document.addEventListener('DOMContentLoaded', () => {
             customerName: userName,
             bookingDate: new Date().toISOString(),
             requestedDateTime: requestedTime ? `${requestedDate}T${requestedTime}` : requestedDate,
-            status: 'Pending'
+            status: 'Pending',
+            paymentMethod: paymentMethod
         };
 
         const bookings = JSON.parse(localStorage.getItem('agrohelp_bookings')) || [];

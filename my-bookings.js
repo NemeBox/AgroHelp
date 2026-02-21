@@ -1,30 +1,16 @@
-document.addEventListener('DOMContentLoaded', () => {
+function loadMyBookings() {
     const bookingsGrid = document.getElementById('my-bookings-grid');
-    const authMessage = document.getElementById('auth-check-message');
+    const userId = localStorage.getItem('agrohelp_user_id');
 
-    if (!bookingsGrid || !authMessage) {
+    if (!bookingsGrid) {
         console.error('AgroHelp: Missing critical "my bookings" page elements.');
         return;
     }
 
     // Auth check
-    const token = localStorage.getItem('agrohelp_token');
-    const userRole = localStorage.getItem('agrohelp_user_role');
-    const userId = localStorage.getItem('agrohelp_user_id');
-
-    if (!token || userRole !== 'customer') {
-        bookingsGrid.style.display = 'none';
-        authMessage.style.display = 'block';
-        authMessage.innerHTML = `
-            <h2>Access Denied</h2>
-            <p>You must be logged in as a customer to view your bookings.</p>
-            <a href="auth_cus.html" class="cta-btn">Login as Customer</a>
-        `;
-        return;
-    }
 
     const allBookings = JSON.parse(localStorage.getItem('agrohelp_bookings')) || [];
-    const myBookings = allBookings.filter(b => b.customerId === userId);
+    const myBookings = allBookings.filter(b => b.customerId === userId).sort((a, b) => new Date(b.bookingDate) - new Date(a.bookingDate));
 
     const allServices = JSON.parse(localStorage.getItem('agrohelp_services')) || [];
 
@@ -39,7 +25,55 @@ document.addEventListener('DOMContentLoaded', () => {
         const bookingCardHTML = createBookingCardForCustomer(booking, service);
         bookingsGrid.insertAdjacentHTML('beforeend', bookingCardHTML);
     });
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    const bookingsGrid = document.getElementById('my-bookings-grid');
+    const authMessage = document.getElementById('auth-check-message');
+
+    if (!bookingsGrid || !authMessage) {
+        return;
+    }
+
+    const token = localStorage.getItem('agrohelp_token');
+    const userRole = localStorage.getItem('agrohelp_user_role');
+
+    if (!token || userRole !== 'customer') {
+        bookingsGrid.style.display = 'none';
+        authMessage.style.display = 'block';
+        authMessage.innerHTML = `
+            <h2>Access Denied</h2>
+            <p>You must be logged in as a customer to view your bookings.</p>
+            <a href="auth_cus.html" class="cta-btn">Login as Customer</a>
+        `;
+        return;
+    }
+
+    loadMyBookings();
+
+    bookingsGrid.addEventListener('click', handleCustomerBookingAction);
 });
+
+function handleCustomerBookingAction(event) {
+    const target = event.target;
+    const bookingId = target.dataset.bookingId;
+
+    if (!bookingId || !target.classList.contains('confirm-completion-btn')) {
+        return;
+    }
+
+    if (confirm('Are you sure you want to confirm that this service has been completed?')) {
+        let allBookings = JSON.parse(localStorage.getItem('agrohelp_bookings')) || [];
+        const bookingIndex = allBookings.findIndex(b => b.bookingId === bookingId);
+
+        if (bookingIndex > -1) {
+            allBookings[bookingIndex].status = 'Awaiting Payment Confirmation';
+            localStorage.setItem('agrohelp_bookings', JSON.stringify(allBookings));
+            loadMyBookings(); // Reload the bookings grid to show the change
+            alert('Confirmation sent to provider. Awaiting their payment confirmation.');
+        }
+    }
+}
 
 function createBookingCardForCustomer(booking, service) {
     if (!service) {
@@ -78,16 +112,44 @@ function createBookingCardForCustomer(booking, service) {
         `;
     }
 
+    let paymentMethodInfo = '';
+    if (booking.paymentMethod) {
+        paymentMethodInfo = `
+            <p class="card-description" style="margin-bottom: 0.5rem;">Payment via: <strong>${booking.paymentMethod}</strong></p>
+        `;
+    }
+
+    let actionArea;
     let statusColor;
+
     switch (booking.status) {
-        case 'Confirmed':
+        case 'Awaiting Customer Confirmation':
+            actionArea = `<button class="cta-btn-small confirm-completion-btn" data-booking-id="${booking.bookingId}">Confirm Service Completed</button>`;
+            break;
+        case 'Awaiting Payment Confirmation':
+            statusColor = 'var(--text-muted)';
+            actionArea = `<span class="booking-status" style="color: ${statusColor}; font-weight: 600;">Awaiting Provider Payment Confirmation</span>`;
+            break;
+        case 'Completed':
             statusColor = 'var(--deep-sage)';
+            if (booking.reviewLeft) {
+                actionArea = `<span class="booking-status" style="color: ${statusColor}; font-weight: 600;">Review Submitted</span>`;
+            } else {
+                actionArea = `<a href="review.html?bookingId=${booking.bookingId}&providerId=${service.providerId}&serviceId=${service.id}" class="cta-btn-small">Leave a Review</a>`;
+            }
             break;
         case 'Declined':
             statusColor = '#c0392b';
+            actionArea = `<span class="booking-status" style="color: ${statusColor}; font-weight: 600;">Status: Declined</span>`;
+            break;
+        case 'Confirmed':
+            statusColor = 'var(--deep-sage)';
+            actionArea = `<span class="booking-status" style="color: ${statusColor}; font-weight: 600;">Status: Confirmed</span>`;
             break;
         default: // Pending
             statusColor = 'var(--text-muted)';
+            actionArea = `<span class="booking-status" style="color: ${statusColor}; font-weight: 600;">Status: Pending</span>`;
+            break;
     }
 
     return `
@@ -100,9 +162,10 @@ function createBookingCardForCustomer(booking, service) {
                 <p class="card-provider">Provider: ${service.providerName}</p>
                 <p class="card-description" style="margin-bottom: 0.5rem;">Requested for: ${requestedDateTimeDisplay}</p>
                 ${providerContactInfo}
+                ${paymentMethodInfo}
                 <div class="card-footer">
                     <span class="card-price">Price: ₹${parseFloat(service.price).toFixed(2)}</span>
-                    <span class="booking-status" style="color: ${statusColor}; font-weight: 600;">Status: ${booking.status}</span>
+                    ${actionArea}
                 </div>
             </div>
         </div>
