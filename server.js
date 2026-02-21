@@ -18,15 +18,11 @@ app.use((req, res, next) => {
 
 // --- Routes ---
 // Public routes for authentication
-app.use('/user', userRoutes);
+app.use('/api/user', userRoutes);
 
 // Temporarily disable product routes for debugging
-// app.use('/products', productRoutes);
-
-// Add a catch-all route for debugging unmatched API calls
-app.use('*', (req, res) => {
-  res.status(404).json({ error: `API route not found: ${req.method} ${req.originalUrl}` });
-});
+// When re-enabling, ensure it also has the /api prefix
+// app.use('/api/products', productRoutes);
 
 // Export the app for the serverless function
 module.exports = app;
