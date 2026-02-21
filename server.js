@@ -18,10 +18,10 @@ app.use((req, res, next) => {
 
 // --- Routes ---
 // Public routes for authentication
-app.use('/api/user', userRoutes);
+app.use('/user', userRoutes);
 
 // Product routes (contains both public and protected routes)
-app.use('/api/products', productRoutes);
+app.use('/products', productRoutes);
 
 // Export the app for the serverless function
 module.exports = app;
