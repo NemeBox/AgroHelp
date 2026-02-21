@@ -50,7 +50,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         try {
-            const response = await fetch('http://localhost:4000/api/user/account', {
+            const response = await fetch('/api/user/account', {
                 method: 'PATCH',
                 headers: {
                     'Content-Type': 'application/json',

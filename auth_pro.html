@@ -195,7 +195,7 @@
             console.log('Frontend sending (provider):', { name, email, password, phone, isRegisterMode });
 
             if (isRegisterMode) { // Use the global isRegisterMode variable
-                url = 'http://localhost:4000/api/user/signup/provider';
+                url = '/api/user/signup/provider';
                 body = { name, email, password, phone };
                 // Client-side validation for registration
                 if (!name.trim()) {
@@ -214,7 +214,7 @@
                     return;
                 }
             } else {
-                url = 'http://localhost:4000/api/user/login/provider';
+                url = '/api/user/login/provider';
                 body = { email, password };
             }
 

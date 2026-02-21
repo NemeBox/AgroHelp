@@ -1,10 +1,10 @@
-# netlify.toml
+# Netlify Build & Deploy Settings
 
 [build]
-  # This is the directory where your serverless functions are located
-  functions = "netlify/functions"
+  command = "npm install" # Installs backend dependencies
+  publish = "."           # Publishes the root directory containing your HTML files
+  functions = "functions" # Specifies the directory for serverless functions
 
-# Redirect all API requests to our serverless function
 [[redirects]]
   from = "/api/*"
   to = "/.netlify/functions/api/:splat"

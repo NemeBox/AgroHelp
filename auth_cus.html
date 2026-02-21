@@ -189,7 +189,7 @@
             console.log('Frontend sending (customer):', { name, email, password, isRegisterMode });
 
             if (isRegisterMode) {
-                url = 'http://localhost:4000/api/user/signup/customer';
+                url = '/api/user/signup/customer';
                 body = { name, email, password };
                 // Client-side validation for registration
                 if (!name.trim()) {
@@ -198,7 +198,7 @@
                     return; // Stop form submission
                 }
             } else {
-                url = 'http://localhost:4000/api/user/login/customer';
+                url = '/api/user/login/customer';
                 body = { email, password };
             }
 

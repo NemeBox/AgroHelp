@@ -24,11 +24,8 @@ app.use('/api/user', userRoutes);
 // Product routes (contains both public and protected routes)
 app.use('/api/products', productRoutes);
 
-// connect to db, then start server
-connectDB().then(() => {
-    const port = process.env.PORT || 4000;
-    // listen for requests
-    app.listen(port, () => {
-        console.log('Server is listening on port', port);
-    });
-});
+// Establish DB connection
+connectDB();
+
+// Export the app for the serverless function
+module.exports = app;
