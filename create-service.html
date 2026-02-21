@@ -15,6 +15,14 @@
             align-items: center;
             justify-content: center;
         }
+        /* Fix for scaling on longer forms */
+        .auth-container {
+            height: auto; /* Allow container to grow with content */
+        }
+        .auth-form-box {
+            justify-content: flex-start; /* Align form to top instead of center */
+            padding: 50px 70px; /* Adjust padding for more content space */
+        }
     </style>
 </head>
 <body>
@@ -86,7 +94,11 @@
                         <i class="fa-solid fa-align-left"></i>
                         <textarea id="serviceDescription" name="description" placeholder="Service Description (optional)" rows="3"></textarea>
                     </div>
-                    <button type="submit" class="btn-auth">Create Service</button>
+                    <div class="input-group">
+                        <i class="fa-solid fa-image"></i>
+                        <input type="url" id="serviceImage" name="imageUrl" placeholder="Image URL (optional)">
+                    </div>
+                    <button type="submit" class="btn-auth" style="margin-top: 1rem;">Create Service</button>
                 </form>
             </div>
         </div>
@@ -126,52 +138,7 @@
         </div>
     </footer>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const token = localStorage.getItem('agrohelp_token');
-            const userRole = localStorage.getItem('agrohelp_user_role');
-            const formContainer = document.getElementById('service-form-container');
-            const authMessage = document.getElementById('auth-check-message');
-
-            if (!token || userRole !== 'expert') {
-                formContainer.style.display = 'none';
-                authMessage.style.display = 'block';
-                authMessage.innerHTML = `
-                    <h2>Access Denied</h2>
-                    <p>You must be logged in as a service provider to create a service.</p>
-                    <a href="auth_pro.html" class="cta-btn">Login as Provider</a>
-                `;
-                return;
-            }
-
-            const form = document.getElementById('create-service-form');
-            form.addEventListener('submit', async (event) => {
-                event.preventDefault();
-
-                const serviceData = {
-                    name: document.getElementById('serviceName').value,
-                    category: document.getElementById('serviceCategory').value,
-                    price: parseFloat(document.getElementById('servicePrice').value),
-                    stock: parseInt(document.getElementById('serviceStock').value),
-                    description: document.getElementById('serviceDescription').value
-                };
-
-                const response = await fetch('http://localhost:4000/api/products', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
-                    body: JSON.stringify(serviceData)
-                });
-
-                const data = await response.json();
-                if (response.ok) {
-                    alert('Service created successfully!');
-                    window.location.href = 'service.html'; // Or a provider dashboard
-                } else {
-                    alert(`Error: ${data.error || 'Failed to create service.'}`);
-                }
-            });
-        });
-    </script>
     <script src="navbar.js"></script>
+    <script src="create-service.js"></script>
 </body>
 </html>

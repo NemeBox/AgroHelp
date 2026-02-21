@@ -3,7 +3,9 @@ function logout() {
     localStorage.removeItem('agrohelp_token');
     localStorage.removeItem('agrohelp_user_id'); // Assuming you might store user ID
     localStorage.removeItem('agrohelp_user_name');
+    localStorage.removeItem('agrohelp_user_email');
     localStorage.removeItem('agrohelp_user_role');
+    localStorage.removeItem('agrohelp_user_phone');
     localStorage.removeItem('agrohelp_user_profile_pic'); // Clear profile pic too
     window.location.href = 'index.html'; // Redirect to home after logout
 }
@@ -85,7 +87,7 @@ function updateAuthHeader() {
         }
 
         // Add "Create Service" link for providers
-        if (userRole === 'expert') {
+        if (userRole === 'provider') {
             // Add "Create Service" link if it doesn't exist
             // Check if the link already exists to prevent duplicates on page navigation
             if (!profileDropdownContent.querySelector('a[href="create-service.html"]')) {
@@ -102,6 +104,25 @@ function updateAuthHeader() {
                 dashboardLink.classList.add('cta-btn');
                 dashboardLink.textContent = 'My Dashboard';
                 profileDropdownContent.prepend(dashboardLink);
+            }
+            // Add "Account Settings" link if it doesn't exist
+            if (!profileDropdownContent.querySelector('a[href="account-settings.html"]')) {
+                const settingsLink = document.createElement('a');
+                settingsLink.href = 'account-settings.html';
+                settingsLink.classList.add('cta-btn');
+                settingsLink.textContent = 'Account Settings';
+                profileDropdownContent.prepend(settingsLink);
+            }
+        }
+
+        // Add "My Bookings" link for customers
+        if (userRole === 'customer') {
+            if (!profileDropdownContent.querySelector('a[href="my-bookings.html"]')) {
+                const myBookingsLink = document.createElement('a');
+                myBookingsLink.href = 'my-bookings.html';
+                myBookingsLink.classList.add('cta-btn');
+                myBookingsLink.textContent = 'My Bookings';
+                profileDropdownContent.prepend(myBookingsLink);
             }
         }
 

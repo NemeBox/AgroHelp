@@ -7,25 +7,25 @@ const createToken = (_id) => {
 };
 
 // login user
-const loginFarmer = async (req, res) => {
+const loginCustomer = async (req, res) => {
   const {email, password} = req.body;
-  const role = 'farmer';
+  const role = 'customer';
 
   try {
     const user = await User.login(email, password, role);
 
     // create a token
     const token = createToken(user._id);
-    res.status(200).json({name: user.name, email, token, role: user.role});
+    res.status(200).json({_id: user._id, name: user.name, email, token, role: user.role});
   } catch (error) {
     res.status(400).json({error: error.message});
   }
 };
 
 // login expert/provider
-const loginExpert = async (req, res) => {
+const loginProvider = async (req, res) => {
   const {email, password} = req.body;
-  const role = 'expert';
+  const role = 'provider';
 
   try {
     const user = await User.login(email, password, role);
@@ -33,44 +33,80 @@ const loginExpert = async (req, res) => {
     // create a token
     const token = createToken(user._id);
 
-    res.status(200).json({name: user.name, email, token, role: user.role});
+    res.status(200).json({_id: user._id, name: user.name, email, token, role: user.role, phone: user.phone});
   } catch (error) {
     res.status(400).json({error: error.message});
   }
 };
 
 
-// signup farmer/customer
-const signupFarmer = async (req, res) => {
+// signup customer
+const signupCustomer = async (req, res) => {
   const {name, email, password} = req.body;
-  const role = 'farmer'; // Hardcode the role for this endpoint
+  const role = 'customer'; // Hardcode the role for this endpoint
 
   try {
     const user = await User.signup(name, email, password, role);
 
     // create a token
     const token = createToken(user._id);
-    res.status(200).json({name: user.name, email, token, role: user.role});
+    res.status(200).json({_id: user._id, name: user.name, email, token, role: user.role});
   } catch (error) {
     res.status(400).json({error: error.message});
   }
 };
 
 // signup expert/provider
-const signupExpert = async (req, res) => {
-  const {name, email, password} = req.body;
-  const role = 'expert'; // Hardcode the role for this endpoint
+const signupProvider = async (req, res) => {
+  const {name, email, password, phone} = req.body;
+  const role = 'provider'; // Hardcode the role for this endpoint
 
   try {
-    const user = await User.signup(name, email, password, role);
+    const user = await User.signup(name, email, password, role, phone);
 
     // create a token
     const token = createToken(user._id);
 
-    res.status(200).json({name: user.name, email, token, role: user.role});
+    res.status(200).json({_id: user._id, name: user.name, email, token, role: user.role, phone: user.phone});
   } catch (error) {
     res.status(400).json({error: error.message});
   }
 };
 
-module.exports = { signupFarmer, signupExpert, loginFarmer, loginExpert };
+const updateAccount = async (req, res) => {
+    const { _id } = req.user;
+    const { name, email, phone } = req.body;
+
+    try {
+        // Check if the new email is already taken by another user
+        if (email) {
+            const existingUser = await User.findOne({ email });
+            if (existingUser && existingUser._id.toString() !== _id.toString()) {
+                return res.status(400).json({ error: 'Email is already in use by another account.' });
+            }
+        }
+
+        // Build the update object with only the fields provided
+        const updateData = {};
+        if (name) updateData.name = name;
+        if (email) updateData.email = email;
+        if (phone !== undefined) updateData.phone = phone;
+
+        const updatedUser = await User.findByIdAndUpdate(_id, updateData, { new: true, runValidators: true });
+
+        if (!updatedUser) {
+            return res.status(404).json({ error: 'User not found.' });
+        }
+
+        res.status(200).json({
+            name: updatedUser.name,
+            email: updatedUser.email,
+            phone: updatedUser.phone
+        });
+
+    } catch (error) {
+        res.status(400).json({ error: error.message });
+    }
+};
+
+module.exports = { signupCustomer, signupProvider, loginCustomer, loginProvider, updateAccount };

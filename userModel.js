@@ -20,13 +20,18 @@ const userSchema = new Schema({
   },
   role: {
     type: String,
-    enum: ['farmer', 'expert', 'admin'],
-    default: 'farmer'
+    enum: ['customer', 'provider', 'admin'],
+    default: 'customer'
+  },
+  phone: {
+    type: String,
+    required: [function() { return this.role === 'provider'; }, 'Phone number is required for providers.'],
+    maxlength: [10, 'Phone number cannot be more than 10 digits.']
   }
 });
 
 // static signup method
-userSchema.statics.signup = async function(name, email, password, role) {
+userSchema.statics.signup = async function(name, email, password, role, phone) {
   // validation
   if (!name || !email || !password) {
     throw Error('All fields must be filled');
@@ -41,8 +46,8 @@ userSchema.statics.signup = async function(name, email, password, role) {
   const salt = await bcrypt.genSalt(10);
   const hash = await bcrypt.hash(password, salt);
 
-  // If role is not provided, the schema default ('farmer') will be used
-  const user = await this.create({ name, email, password: hash, role });
+  // If role is not provided, the schema default ('customer') will be used
+  const user = await this.create({ name, email, password: hash, role, phone });
 
   return user;
 };

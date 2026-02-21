@@ -16,7 +16,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (!user.id) {
             alert('You must be logged in to create a service.');
-            window.location.href = 'prov-auth.html';
+            window.location.href = 'auth_pro.html';
             return;
         }
 
@@ -24,11 +24,12 @@ document.addEventListener('DOMContentLoaded', () => {
             id: `service_${Date.now()}`, // Unique ID for the service
             providerId: user.id,
             providerName: user.name,
-            name: formData.get('serviceName'),
-            category: formData.get('serviceCategory'), // e.g., 'rentals', 'consultancy'
-            description: formData.get('serviceDescription'),
-            price: formData.get('servicePrice'),
-            imageUrl: formData.get('serviceImage'),
+            name: formData.get('name'),
+            category: formData.get('category'),
+            description: formData.get('description'),
+            price: formData.get('price'),
+            stock: formData.get('stock'),
+            imageUrl: formData.get('imageUrl'),
         };
 
         if (!newService.name || !newService.category || !newService.price) {
@@ -41,6 +42,6 @@ document.addEventListener('DOMContentLoaded', () => {
         localStorage.setItem('agrohelp_services', JSON.stringify(services));
 
         alert('Service created successfully!');
-        window.location.href = 'services.html'; // Redirect to the services page
+        window.location.href = 'service.html'; // Redirect to the services page
     });
 });

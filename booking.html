@@ -3,9 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AgroHelp - Our Services</title>
+    <title>AgroHelp | Confirm Booking</title>
     <link rel="stylesheet" href="styles.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 </head>
 <body>
@@ -29,7 +28,6 @@
                     <div class="profile-menu-container">
                         <img id="profilePic" class="profile-pic-circle" alt="User Profile">
                         <div id="profileDropdownContent" class="profile-dropdown-content">
-                            <!-- Links will be dynamically added here by navbar.js -->
                             <a href="#" class="cta-btn logout-btn">Logout</a>
                         </div>
                     </div>
@@ -38,19 +36,14 @@
         </div>
     </header>
 
-    <main>
-        <section class="services" id="services-list">
-            <div class="container">
-                <div class="section-header center">
-                    <span class="section-label">Marketplace</span>
-                    <h2 class="section-title">All Available Services</h2>
-                </div>
-                
-                <div class="service-grid" id="services-grid">
-                    <!-- All services will be dynamically inserted here -->
-                </div>
+    <main style="padding-top: 120px; padding-bottom: 100px; min-height: 80vh;">
+        <div class="container">
+            <div id="auth-check-message" style="display: none; text-align: center;"></div>
+            <div id="booking-details">
+                <!-- Service details and confirmation will be loaded here by booking.js -->
             </div>
-        </section>
+            <button id="confirm-booking-btn" class="cta-btn" style="margin-top: 2rem; display: block;">Confirm Booking</button>
+        </div>
     </main>
 
     <footer class="main-footer">
@@ -58,31 +51,21 @@
             <div class="footer-brand">
                 <h2 class="logo-text">AgroHelp</h2>
                 <p>Empowering the agricultural ecosystem through shared resources.</p>
-                <div class="footer-socials">
-                    <a href="#" aria-label="Facebook"><i class="fa-brands fa-facebook-f"></i></a>
-                    <a href="#" aria-label="Twitter"><i class="fa-brands fa-x-twitter"></i></a>
-                    <a href="#" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
-                    <a href="#" aria-label="LinkedIn"><i class="fa-brands fa-linkedin-in"></i></a>
-                </div>
             </div>
-    
             <div class="footer-links">
                 <h4>Quick Links</h4>
                 <ul>
-                    <li><a href="index.html#home">Home</a></li>
-                    <li><a href="index.html#about">Information</a></li>
+                    <li><a href="index.html">Home</a></li>
                     <li><a href="service.html">Services</a></li>
                     <li><a href="contact.html">Contact Us</a></li>
                 </ul>
             </div>
-    
             <div class="footer-contact">
                 <h4>Contact Us</h4>
                 <p><i class="fa-solid fa-envelope"></i> support@agrohelp.com</p>
                 <p><i class="fa-solid fa-location-dot"></i> Mumbai, Maharashtra, India</p>
             </div>
         </div>
-    
         <div class="footer-bottom center">
             <div class="container">
                 <p>&copy; 2026 AgroHelp. All rights reserved.</p>
@@ -91,6 +74,6 @@
     </footer>
 
     <script src="navbar.js"></script>
-    <script src="services.js"></script>
+    <script src="booking.js"></script>
 </body>
 </html>

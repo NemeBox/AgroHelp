@@ -26,8 +26,9 @@ app.use('/api/products', productRoutes);
 
 // connect to db, then start server
 connectDB().then(() => {
+    const port = process.env.PORT || 4000;
     // listen for requests
-    app.listen(process.env.PORT, () => {
-        console.log('Server is listening on port', process.env.PORT);
+    app.listen(port, () => {
+        console.log('Server is listening on port', port);
     });
 });

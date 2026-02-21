@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AgroHelp | Edit Service</title>
+    <title>AgroHelp | Account Settings</title>
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
@@ -14,20 +14,12 @@
             align-items: center;
             justify-content: center;
         }
-        /* Fix for scaling on longer forms */
         .auth-container {
-            height: auto; /* Allow container to grow with content */
+            height: auto;
         }
         .auth-form-box {
-            justify-content: flex-start; /* Align form to top instead of center */
-            padding: 50px 70px; /* Adjust padding for more content space */
-        }
-        .delete-btn {
-            background-color: #c0392b !important;
-            margin-top: 1rem;
-        }
-        .delete-btn:hover {
-            background-color: #a93226 !important;
+            justify-content: flex-start;
+            padding: 50px 70px;
         }
     </style>
 </head>
@@ -60,50 +52,29 @@
 
     <main class="auth-section">
         <div id="auth-check-message" style="display: none; text-align: center; padding: 40px;"></div>
-        <div class="auth-container" id="service-form-container">
+        <div class="auth-container" id="account-form-container">
             <div class="auth-visual">
                 <div class="visual-content">
                     <div class="logo-text">AgroHelp</div>
-                    <h1>Refine Your Offering.<br><span>Update Service Details.</span></h1>
+                    <h1>Manage Your Profile.<br><span>Keep your details up to date.</span></h1>
                 </div>
             </div>
             <div class="auth-form-box">
-                <h2 id="formTitle">Edit Service</h2>
-                <form id="edit-service-form">
+                <h2 id="formTitle">Account Settings</h2>
+                <form id="account-settings-form">
                     <div class="input-group">
-                        <i class="fa-solid fa-tag"></i>
-                        <input type="text" name="name" placeholder="Service/Product Name" required>
+                        <i class="fa-solid fa-user"></i>
+                        <input type="text" name="name" placeholder="Full Name or Business Name" required>
                     </div>
                     <div class="input-group">
-                        <i class="fa-solid fa-layer-group"></i>
-                        <select name="category" required>
-                            <option value="" disabled>Select a Category</option>
-                            <option value="Tool">Tool</option>
-                            <option value="Fertilizer">Fertilizer</option>
-                            <option value="Consultancy">Consultancy</option>
-                            <option value="Soil Testing">Soil Testing</option>
-                            <option value="Heavy Machinery">Heavy Machinery</option>
-                            <option value="Other">Other</option>
-                        </select>
+                        <i class="fa-solid fa-envelope"></i>
+                        <input type="email" name="email" placeholder="Email Address" required>
                     </div>
                     <div class="input-group">
-                        <i class="fa-solid fa-indian-rupee-sign"></i>
-                        <input type="number" name="price" placeholder="Price" required min="0" step="0.01">
-                    </div>
-                    <div class="input-group">
-                        <i class="fa-solid fa-boxes-stacked"></i>
-                        <input type="number" name="stock" placeholder="Stock/Availability" min="0">
-                    </div>
-                    <div class="input-group">
-                        <i class="fa-solid fa-align-left"></i>
-                        <textarea name="description" placeholder="Service Description" rows="3"></textarea>
-                    </div>
-                    <div class="input-group">
-                        <i class="fa-solid fa-image"></i>
-                        <input type="url" name="imageUrl" placeholder="Image URL">
+                        <i class="fa-solid fa-phone"></i>
+                        <input type="tel" name="phone" placeholder="Phone Number" required maxlength="10">
                     </div>
                     <button type="submit" class="btn-auth">Save Changes</button>
-                    <button type="button" id="delete-service-btn" class="btn-auth delete-btn">Delete Service</button>
                 </form>
             </div>
         </div>
@@ -116,6 +87,6 @@
     </footer>
 
     <script src="navbar.js"></script>
-    <script src="edit-service.js"></script>
+    <script src="account-settings.js"></script>
 </body>
 </html>

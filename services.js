@@ -1,63 +1,42 @@
-document.addEventListener('DOMContentLoaded', async () => {
-    const gridContainer = document.getElementById('all-services-grid');
-
-    if (!gridContainer) {
-        console.error('AgroHelp: The main service grid container with id "all-services-grid" was not found.');
+document.addEventListener('DOMContentLoaded', () => {
+    const servicesGrid = document.getElementById('services-grid'); // Assuming this ID exists in services.html
+    if (!servicesGrid) {
+        console.error("AgroHelp: Element with ID 'services-grid' not found.");
         return;
     }
-    
-    try {
-        const response = await fetch('http://localhost:4000/api/products/public');
-        const services = await response.json();
 
-        if (!response.ok) {
-            throw new Error(services.error || 'Failed to fetch services.');
-        }
+    const allServices = JSON.parse(localStorage.getItem('agrohelp_services')) || [];
+    const currentUserRole = localStorage.getItem('agrohelp_user_role');
+    const currentUserId = localStorage.getItem('agrohelp_user_id');
 
-        if (services.length === 0) {
-            gridContainer.innerHTML = `<p class="no-services-message">No services are available at the moment. Please check back later!</p>`;
-            return;
-        }
-
-        // Clear any existing content and populate with fetched services
-        gridContainer.innerHTML = '';
-        services.forEach(service => {
-            const serviceCardHTML = createServiceCard(service);
-            gridContainer.innerHTML += serviceCardHTML;
-        });
-
-        // Add event listener for details buttons using event delegation
-        gridContainer.addEventListener('click', (event) => {
-            if (event.target.classList.contains('view-details-btn')) {
-                const button = event.target;
-                const cardBody = button.closest('.card-body');
-                const stockInfo = cardBody.querySelector('.card-stock');
-                const description = cardBody.querySelector('.card-description');
-
-                const isDetailsVisible = description.style.display === 'block';
-
-                if (isDetailsVisible) {
-                    description.style.display = 'none';
-                    stockInfo.style.display = 'block';
-                    button.textContent = 'View Details';
-                } else {
-                    description.style.display = 'block';
-                    stockInfo.style.display = 'none';
-                    button.textContent = 'Hide Details';
-                }
-            }
-        });
-    } catch (error) {
-        console.error('Error fetching services:', error);
-        gridContainer.innerHTML = `<p class="no-services-message">Could not load services. Please try again later.</p>`;
+    if (allServices.length === 0) {
+        servicesGrid.innerHTML = `<p class="no-services-message">No services are available at the moment. Please check back later.</p>`;
+        return;
     }
+
+    servicesGrid.innerHTML = '';
+    allServices.forEach(service => {
+        const serviceCard = createServiceCard(service, currentUserRole, currentUserId);
+        servicesGrid.insertAdjacentHTML('beforeend', serviceCard);
+    });
 });
 
-function createServiceCard(service) {
-    // Default image if none is provided in the future
+function createServiceCard(service, userRole, userId) {
     const imageUrl = service.imageUrl || 'https://images.unsplash.com/photo-1556056504-5c7696e4734d?w=600';
+    
+    let actionButton = '';
+    // Show "Book Now" button only to 'customer' role
+    // And don't show it if the customer is the provider of the service
+    if (userRole === 'customer' && service.providerId !== userId) {
+        actionButton = `<a href="booking.html?serviceId=${service.id}" class="cta-btn-small">Book Now</a>`;
+    } else if (!userRole) {
+        // If user is not logged in, prompt to login
+        actionButton = `<a href="auth_cus.html" class="cta-btn-small">Login to Book</a>`;
+    } else if (service.providerId === userId) {
+        // If the user is the provider of this service
+        actionButton = `<span class="cta-btn-small" style="background-color: #aaa; cursor: default;">Your Service</span>`;
+    }
 
-    // This function creates the HTML for a single service card.
     return `
         <div class="service-card">
             <div class="card-img-wrapper">
@@ -65,15 +44,11 @@ function createServiceCard(service) {
             </div>
             <div class="card-body">
                 <h3 class="card-title">${service.name}</h3>
-                <p class="card-provider">Category: ${service.category}</p>
-                <p class="card-stock" style="flex-grow: 1; margin-bottom: 1.5rem; font-size: 0.95rem; line-height: 1.6;">Available Stock: ${service.stock}</p>
-                <div class="card-description" style="display: none;">
-                    <h4>Details</h4>
-                    <p>${service.description || 'No description provided.'}</p>
-                </div>
+                <p class="card-provider">Provider: ${service.providerName}</p>
+                <p class="card-description">${service.description || 'No description provided.'}</p>
                 <div class="card-footer">
                     <span class="card-price">₹${parseFloat(service.price).toFixed(2)}</span>
-                    <button type="button" class="cta-btn-small view-details-btn">View Details</button>
+                    ${actionButton}
                 </div>
             </div>
         </div>

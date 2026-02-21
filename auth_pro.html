@@ -82,6 +82,11 @@
                         <input type="password" placeholder="Password" required id="regPass">
                     </div>
 
+                    <div class="input-group" id="phoneField" style="display: none;">
+                        <i class="fa-solid fa-phone"></i>
+                        <input type="tel" placeholder="Phone Number" id="regPhone" maxlength="10">
+                    </div>
+
                     <button type="submit" class="btn-auth" id="submitBtn">Login to Portal</button>
                 </form>
 
@@ -138,7 +143,9 @@
 
         function setMode(mode) {
             const nameField = document.getElementById('nameField');
+            const phoneField = document.getElementById('phoneField');
             const regNameInput = document.getElementById('regName'); // Get the input element
+            const regPhoneInput = document.getElementById('regPhone');
             const formTitle = document.getElementById('formTitle');
             const submitBtn = document.getElementById('submitBtn');
             const loginToggle = document.getElementById('loginToggle');
@@ -146,7 +153,9 @@
             
             if (mode === 'register') { // Switch to register mode
                 nameField.style.display = 'block';
+                phoneField.style.display = 'block';
                 regNameInput.setAttribute('required', ''); // Ensure required is set
+                regPhoneInput.setAttribute('required', '');
                 formTitle.innerText = "Start providing services.";
                 submitBtn.innerText = "Create Provider Account";
                 regToggle.classList.add('active');
@@ -155,11 +164,13 @@
             } else {
                 // Switch to login mode
                 nameField.style.display = 'none';
+                phoneField.style.display = 'none';
                 formTitle.innerText = "Grow your business with us.";
                 submitBtn.innerText = "Login to Portal";
                 loginToggle.classList.add('active');
                 regToggle.classList.remove('active');
                 regNameInput.removeAttribute('required'); // Remove required for login
+                regPhoneInput.removeAttribute('required');
                 isRegisterMode = false;
             }
         }
@@ -176,23 +187,34 @@
             const name = document.getElementById('regName').value;
             const email = document.getElementById('regEmail').value;
             const password = document.getElementById('regPass').value;
+            const phone = document.getElementById('regPhone').value;
 
             let url = '';
             let body = {};
 
-            console.log('Frontend sending (provider):', { name, email, password, isRegisterMode });
+            console.log('Frontend sending (provider):', { name, email, password, phone, isRegisterMode });
 
             if (isRegisterMode) { // Use the global isRegisterMode variable
-                url = 'http://localhost:4000/api/user/signup/expert';
-                body = { name, email, password };
+                url = 'http://localhost:4000/api/user/signup/provider';
+                body = { name, email, password, phone };
                 // Client-side validation for registration
                 if (!name.trim()) {
                     alert('Please enter your Business or Full Name.');
                     document.getElementById('regName').focus();
                     return; // Stop form submission
                 }
+                if (!phone.trim()) {
+                    alert('Please enter your Phone Number.');
+                    document.getElementById('regPhone').focus();
+                    return;
+                }
+                if (phone.trim().length > 10) {
+                    alert('Phone number cannot be more than 10 digits.');
+                    document.getElementById('regPhone').focus();
+                    return;
+                }
             } else {
-                url = 'http://localhost:4000/api/user/login/expert';
+                url = 'http://localhost:4000/api/user/login/provider';
                 body = { email, password };
             }
 
@@ -212,8 +234,13 @@
                     // Store token (if available) and redirect
                     if (data.token) {
                         localStorage.setItem('agrohelp_token', data.token);
+                        localStorage.setItem('agrohelp_user_id', data._id);
                         localStorage.setItem('agrohelp_user_name', data.name);
+                        localStorage.setItem('agrohelp_user_email', data.email);
                         localStorage.setItem('agrohelp_user_role', data.role);
+                        if (data.phone) {
+                            localStorage.setItem('agrohelp_user_phone', data.phone);
+                        }
                         // Placeholder for profile picture URL - assuming backend would provide it
                         localStorage.setItem('agrohelp_user_profile_pic', data.profilePicUrl || '');
                     }
