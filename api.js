@@ -19,8 +19,6 @@ const handler = async (event, context) => {
       // `await`ing the connection here makes sure we're connected before proceeding
       await conn;
       console.log('Mongoose connection created.');
-    } else {
-      console.log('Re-using existing mongoose connection.');
     }
 
     return serverless(app)(event, context);
