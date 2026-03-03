@@ -1,44 +1,78 @@
 document.addEventListener('DOMContentLoaded', async () => {
     const servicesGrid = document.getElementById('services-grid');
+    const searchInput = document.getElementById('services-search-input');
+    const searchButton = document.getElementById('services-search-btn');
+
     if (!servicesGrid) {
         console.error('AgroHelp: The services grid element with id "services-grid" was not found.');
         return;
     }
 
-    // Display a loading message while fetching data
-    servicesGrid.innerHTML = '<p class="no-services-message">Loading available services...</p>';
+    // Function to fetch and render services based on a query
+    const loadServices = async (query = '') => {
+        servicesGrid.innerHTML = '<p class="no-services-message">Loading available services...</p>';
+        try {
+            const url = query ? `/api/services?q=${encodeURIComponent(query)}` : '/api/services';
+            const response = await fetch(url);
+            if (!response.ok) {
+                throw new Error('Failed to fetch services from the server.');
+            }
+            const services = await response.json();
 
-    try {
-        // Fetch all public services from the backend API
-        const response = await fetch('/api/services');
-        if (!response.ok) {
-            throw new Error('Failed to fetch services from the server.');
+            if (services.length === 0) {
+                if (query) {
+                    servicesGrid.innerHTML = `<p class="no-services-message">No services found for "${query}". Please try a different search.</p>`;
+                } else {
+                    servicesGrid.innerHTML = '<p class="no-services-message">No services are available at the moment. Please check back later.</p>';
+                }
+            } else {
+                servicesGrid.innerHTML = ''; // Clear the loading message
+                services.forEach(service => {
+                    const serviceCardHTML = createPublicServiceCard(service);
+                    servicesGrid.insertAdjacentHTML('beforeend', serviceCardHTML);
+                });
+            }
+        } catch (error) {
+            console.error('Error loading services:', error);
+            servicesGrid.innerHTML = '<p class="no-services-message" style="color: var(--error-red);">Could not load services. Please check your network connection and try again.</p>';
         }
-        const services = await response.json();
+    };
 
-        if (services.length === 0) {
-            servicesGrid.innerHTML = '<p class="no-services-message">No services are available at the moment. Please check back later.</p>';
-        } else {
-            servicesGrid.innerHTML = ''; // Clear the loading message
-            services.forEach(service => {
-                const serviceCardHTML = createPublicServiceCard(service);
-                servicesGrid.insertAdjacentHTML('beforeend', serviceCardHTML);
-            });
-        }
-    } catch (error) {
-        console.error('Error loading services:', error);
-        servicesGrid.innerHTML = '<p class="no-services-message" style="color: var(--error-red);">Could not load services. Please check your network connection and try again.</p>';
+    // Initial load: Check for a query from the URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const initialQuery = urlParams.get('q');
+    if (searchInput && initialQuery) {
+        searchInput.value = initialQuery;
+    }
+    await loadServices(initialQuery || '');
+
+    // Handle search functionality on the services page itself
+    if (searchInput && searchButton) {
+        const performSearch = () => {
+            const query = searchInput.value.trim();
+            // Update URL for shareability, without reloading the page
+            const newUrl = query ? `${window.location.pathname}?q=${encodeURIComponent(query)}` : window.location.pathname;
+            window.history.pushState({ path: newUrl }, '', newUrl);
+            // Fetch and display filtered services
+            loadServices(query);
+        };
+
+        searchButton.addEventListener('click', performSearch);
+        searchInput.addEventListener('keypress', (event) => {
+            if (event.key === 'Enter') {
+                performSearch();
+            }
+        });
     }
 });
 
 function createPublicServiceCard(service) {
-    const imageUrl = service.imageUrl || 'https://images.unsplash.com/photo-1556056504-5c7696e4734d?w=600';
     const serviceId = service._id; // Use MongoDB's _id
 
     return `
         <div class="service-card">
-            <div class="card-img-wrapper">
-                <img src="${imageUrl}" alt="${service.name}">
+            <div class="card-icon-wrapper">
+                <i class="${service.icon || 'fa-solid fa-gear'}"></i>
             </div>
             <div class="card-body">
                 <h3 class="card-title">${service.name}</h3>

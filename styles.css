@@ -198,10 +198,21 @@ body {
     box-shadow: 0 30px 60px rgba(46, 125, 50, 0.12); 
 }
 
-.card-img-wrapper { 
+.card-icon-wrapper {
     width: 100%;
-    height: 250px; 
+    height: 200px; /* Fixed height for consistency */
+    display: flex; /* Use flexbox for centering */
+    align-items: center; /* Center vertically */
+    justify-content: center; /* Center horizontally */
+    background-color: var(--pastel-green); /* Light background for the icon */
+    border-bottom: 1px solid rgba(0,0,0,0.05); /* Subtle separator */
     overflow: hidden; 
+}
+
+.card-icon-wrapper i {
+    font-size: 5rem; /* Large icon size */
+    color: var(--deep-sage); /* Brand color for icons */
+    opacity: 0.8; /* Slightly transparent */
 }
 
 .card-img-wrapper img {
@@ -364,6 +375,23 @@ body {
     padding-top: 120px; /* Space for navbar */
     padding-bottom: 100px;
     background-color: var(--pastel-green); /* Match homepage services section */
+}
+
+/* NEW: Search bar on services page */
+.services-search-container {
+    background: var(--white);
+    border: 1px solid rgba(0,0,0,0.1);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+    margin-bottom: 3rem;
+    max-width: 800px;
+}
+
+.services-search-container .search-box input {
+    color: var(--text-dark);
+}
+
+.services-search-container .search-box input::placeholder {
+    color: var(--text-muted);
 }
 
 .no-services-message {

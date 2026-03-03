@@ -97,15 +97,14 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function createDashboardServiceCard(service) {
-        const imageUrl = service.imageUrl || 'https://images.unsplash.com/photo-1556056504-5c7696e4734d?w=600';
         // IMPORTANT: MongoDB uses '_id' for its unique identifier, not 'id'.
         // We must use service._id to link to the edit page.
         const serviceId = service._id;
 
         return `
             <div class="service-card">
-                <div class="card-img-wrapper">
-                    <img src="${imageUrl}" alt="${service.name}">
+                <div class="card-icon-wrapper">
+                    <i class="${service.icon || 'fa-solid fa-gear'}"></i>
                 </div>
                 <div class="card-body">
                     <h3 class="card-title">${service.name}</h3>
@@ -259,6 +258,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
         return `
             <div class="service-card booking-card">
+                <div class="card-icon-wrapper">
+                    <i class="${service.icon || 'fa-solid fa-gear'}"></i>
+                </div>
                 <div class="card-body">
                     <h3 class="card-title">Booking for: ${service.name}</h3>
                     <p class="card-provider">Booked by: ${booking.customerId ? booking.customerId.name : 'N/A'}</p>

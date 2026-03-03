@@ -16,8 +16,8 @@ const UserSchema = new mongoose.Schema({
   password: { type: String, required: true, select: false }, // 'select: false' prevents password from being returned by default queries
   role: { type: String, enum: ['customer', 'provider'], required: true },
   phone: String, // Optional, primarily for providers
-});
-const ServiceSchema = new mongoose.Schema({ providerId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true }, name: { type: String, required: true }, price: { type: Number, required: true }, category: String, description: String, imageUrl: String, isAvailable: { type: Boolean, default: true } }); // isAvailable added
+}); // isAvailable added
+const ServiceSchema = new mongoose.Schema({ providerId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true }, name: { type: String, required: true }, price: { type: Number, required: true }, category: String, description: String, icon: String, isAvailable: { type: Boolean, default: true } });
 const BookingSchema = new mongoose.Schema({ serviceId: { type: mongoose.Schema.Types.ObjectId, ref: 'Service', required: true }, customerId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true }, providerId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true }, requestedDateTime: String, paymentMethod: String, status: { type: String, default: 'Pending' }, reviewLeft: { type: Boolean, default: false }, review: { type: mongoose.Schema.Types.ObjectId, ref: 'Review' } }, { timestamps: true });
 // Review Schema
 const ReviewSchema = new mongoose.Schema({
@@ -357,8 +357,23 @@ router.patch('/bookings/:id/status', authMiddleware, async (req, res) => {
 // Handles GET /api/services (for public listing)
 router.get('/services', async (req, res) => {
   try {
+    const { q } = req.query;
+    const pipeline = [];
+
+    // If a search query is provided, add a $match stage at the beginning
+    if (q) {
+      pipeline.push({
+        $match: {
+          $or: [
+            { name: { $regex: q, $options: 'i' } },
+            { description: { $regex: q, $options: 'i' } },
+            { category: { $regex: q, $options: 'i' } }
+          ]
+        }
+      });
+    }
     // Use an aggregation pipeline to ensure we only return services with valid, existing providers.
-    const services = await Service.aggregate([
+    pipeline.push(
       {
         // This is an efficient way to join the services collection with the users collection.
         $lookup: {
@@ -382,11 +397,12 @@ router.get('/services', async (req, res) => {
           price: 1,
           category: 1,
           description: 1,
-          imageUrl: 1,
+          icon: 1,
           providerId: { _id: '$providerDetails._id', name: '$providerDetails.name' }
         }
       }
-    ]);
+    );
+    const services = await Service.aggregate(pipeline);
     res.status(200).json(services);
   } catch (error) {
     console.error('Error fetching public services:', error);
@@ -399,14 +415,14 @@ router.get('/services', async (req, res) => {
 router.post('/services', authMiddleware, async (req, res) => {
   try {
     const providerId = req.user.id; // Get provider ID from authenticated user
-    const { name, price, category, description, imageUrl } = req.body;
+    const { name, price, category, description, icon } = req.body;
 
     if (!name || !price || !category) {
       return res.status(400).json({ message: 'Missing required service fields.' });
     }
 
     // Create new service
-    const newService = new Service({ name, price, category, description, imageUrl, providerId });
+    const newService = new Service({ name, price, category, description, icon, providerId });
     await newService.save();
     res.status(201).json(newService);
   } catch (error) {

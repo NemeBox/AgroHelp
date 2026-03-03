@@ -185,8 +185,8 @@ function createBookingCardForCustomer(booking, service) {
 
     return `
         <div class="service-card booking-card">
-            <div class="card-img-wrapper">
-                <img src="${service.imageUrl || 'https://images.unsplash.com/photo-1556056504-5c7696e4734d?w=600'}" alt="${service.name}">
+            <div class="card-icon-wrapper">
+                <i class="${service.icon || 'fa-solid fa-gear'}"></i>
             </div>
             <div class="card-body">
                 <h3 class="card-title">${service.name}</h3>
