@@ -1,30 +1,45 @@
-function loadMyBookings() {
+async function loadMyBookings() {
     const bookingsGrid = document.getElementById('my-bookings-grid');
-    const userId = localStorage.getItem('agrohelp_user_id');
+    const token = localStorage.getItem('agrohelp_token');
 
     if (!bookingsGrid) {
         console.error('AgroHelp: Missing critical "my bookings" page elements.');
         return;
     }
 
-    // Auth check
+    bookingsGrid.innerHTML = `<p>Loading your bookings...</p>`;
 
-    const allBookings = JSON.parse(localStorage.getItem('agrohelp_bookings')) || [];
-    const myBookings = allBookings.filter(b => b.customerId === userId).sort((a, b) => new Date(b.bookingDate) - new Date(a.bookingDate));
+    try {
+        // This new endpoint should be created in the backend.
+        // It should be protected and return bookings for the logged-in customer,
+        // with service details populated via .populate('serviceId').
+        const response = await fetch('/api/bookings/mine', {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        });
 
-    const allServices = JSON.parse(localStorage.getItem('agrohelp_services')) || [];
+        if (!response.ok) {
+            throw new Error(`Failed to fetch bookings: ${response.statusText}`);
+        }
 
-    if (myBookings.length === 0) {
-        bookingsGrid.innerHTML = `<p class="no-services-message">You have not booked any services yet. <a href="service.html">Browse services now!</a></p>`;
-        return;
+        const myBookings = await response.json();
+
+        if (myBookings.length === 0) {
+            bookingsGrid.innerHTML = `<p class="no-services-message">You have not booked any services yet. <a href="service.html">Browse services now!</a></p>`;
+            return;
+        }
+
+        bookingsGrid.innerHTML = '';
+        myBookings.forEach(booking => {
+            // The 'service' object is now expected to be populated by the API.
+            const bookingCardHTML = createBookingCardForCustomer(booking, booking.serviceId);
+            bookingsGrid.insertAdjacentHTML('beforeend', bookingCardHTML);
+        });
+    } catch (error) {
+        console.error('Error loading bookings:', error);
+        bookingsGrid.innerHTML = `<p class="no-services-message" style="color: var(--error-red);">Could not load your bookings. Please try again later.</p>`;
     }
-
-    bookingsGrid.innerHTML = '';
-    myBookings.forEach(booking => {
-        const service = allServices.find(s => s.id === booking.serviceId);
-        const bookingCardHTML = createBookingCardForCustomer(booking, service);
-        bookingsGrid.insertAdjacentHTML('beforeend', bookingCardHTML);
-    });
 }
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -54,35 +69,49 @@ document.addEventListener('DOMContentLoaded', () => {
     bookingsGrid.addEventListener('click', handleCustomerBookingAction);
 });
 
-function handleCustomerBookingAction(event) {
+async function handleCustomerBookingAction(event) {
     const target = event.target;
     const bookingId = target.dataset.bookingId;
+    const token = localStorage.getItem('agrohelp_token');
 
     if (!bookingId || !target.classList.contains('confirm-completion-btn')) {
         return;
     }
 
     if (confirm('Are you sure you want to confirm that this service has been completed?')) {
-        let allBookings = JSON.parse(localStorage.getItem('agrohelp_bookings')) || [];
-        const bookingIndex = allBookings.findIndex(b => b.bookingId === bookingId);
+        try {
+            const response = await fetch(`/api/bookings/${bookingId}/status`, {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify({ status: 'Awaiting Payment Confirmation' })
+            });
 
-        if (bookingIndex > -1) {
-            allBookings[bookingIndex].status = 'Awaiting Payment Confirmation';
-            localStorage.setItem('agrohelp_bookings', JSON.stringify(allBookings));
-            loadMyBookings(); // Reload the bookings grid to show the change
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.message || 'Failed to update booking status.');
+            }
+
             alert('Confirmation sent to provider. Awaiting their payment confirmation.');
+            loadMyBookings(); // Reload the bookings grid to show the change
+        } catch (error) {
+            console.error('Error updating booking:', error);
+            alert(`Error: ${error.message}`);
         }
     }
 }
 
 function createBookingCardForCustomer(booking, service) {
     if (!service) {
-        // Handle case where service might have been deleted
+        // This now correctly handles the case where a service was deleted from the database.
+        // The booking._id from the database is used instead of a client-side ID.
         return `
             <div class="service-card booking-card">
                 <div class="card-body">
-                    <h3 class="card-title" style="color: #999;">Booked Service (No longer available)</h3>
-                    <p class="card-provider">Booking ID: ${booking.bookingId}</p>
+                    <h3 class="card-title" style="color: #999;">Booked Service (Details Unavailable)</h3>
+                    <p class="card-provider">Booking ID: ${booking._id}</p>
                     <p class="card-description">Booked on: ${new Date(booking.bookingDate).toLocaleDateString()}</p>
                 </div>
             </div>
@@ -124,7 +153,8 @@ function createBookingCardForCustomer(booking, service) {
 
     switch (booking.status) {
         case 'Awaiting Customer Confirmation':
-            actionArea = `<button class="cta-btn-small confirm-completion-btn" data-booking-id="${booking.bookingId}">Confirm Service Completed</button>`;
+            // Use booking._id from the database for the data attribute
+            actionArea = `<button class="cta-btn-small confirm-completion-btn" data-booking-id="${booking._id}">Confirm Service Completed</button>`;
             break;
         case 'Awaiting Payment Confirmation':
             statusColor = 'var(--text-muted)';
@@ -135,7 +165,8 @@ function createBookingCardForCustomer(booking, service) {
             if (booking.reviewLeft) {
                 actionArea = `<span class="booking-status" style="color: ${statusColor}; font-weight: 600;">Review Submitted</span>`;
             } else {
-                actionArea = `<a href="review.html?bookingId=${booking.bookingId}&providerId=${service.providerId}&serviceId=${service.id}" class="cta-btn-small">Leave a Review</a>`;
+                // Use booking._id and service._id from the database for the review link
+                actionArea = `<a href="review.html?bookingId=${booking._id}&providerId=${service.providerId}&serviceId=${service._id}" class="cta-btn-small">Leave a Review</a>`;
             }
             break;
         case 'Declined':

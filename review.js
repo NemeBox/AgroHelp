@@ -1,4 +1,4 @@
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
     const form = document.getElementById('review-form');
     const formContainer = document.getElementById('review-form-container');
     const authMessage = document.getElementById('auth-check-message');
@@ -28,71 +28,83 @@ document.addEventListener('DOMContentLoaded', () => {
     // 2. Get IDs from URL
     const urlParams = new URLSearchParams(window.location.search);
     const bookingId = urlParams.get('bookingId');
-    const providerId = urlParams.get('providerId');
-    const serviceId = urlParams.get('serviceId');
 
-    if (!bookingId || !providerId || !serviceId) {
+    if (!bookingId) {
         formContainer.innerHTML = '<p class="no-services-message">Missing booking information. Cannot leave a review.</p>';
         return;
     }
 
-    // 3. Check if review is valid
-    const allBookings = JSON.parse(localStorage.getItem('agrohelp_bookings')) || [];
-    const booking = allBookings.find(b => b.bookingId === bookingId);
+    try {
+        // 3. Fetch booking details from API to validate if a review can be left
+        const response = await fetch(`/api/bookings/${bookingId}`, {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
 
-    if (!booking || booking.customerId !== userId || booking.status !== 'Completed' || booking.reviewLeft) {
-        formContainer.style.display = 'none';
-        authMessage.style.display = 'block';
-        authMessage.innerHTML = `
-            <h2>Review Not Allowed</h2>
-            <p>You cannot leave a review for this booking. It may not be completed or a review may have already been submitted.</p>
-            <a href="my-bookings.html" class="cta-btn">Back to My Bookings</a>
-        `;
-        return;
-    }
+        if (!response.ok) {
+            throw new Error('Could not find the specified booking.');
+        }
 
-    // Display service name
-    const allServices = JSON.parse(localStorage.getItem('agrohelp_services')) || [];
-    const service = allServices.find(s => s.id === serviceId);
-    if (service) {
-        serviceNameDisplay.textContent = `For service: "${service.name}"`;
-    }
+        const booking = await response.json();
 
-    // 4. Handle form submission
-    form.addEventListener('submit', (event) => {
-        event.preventDefault();
-        const formData = new FormData(form);
-        const rating = formData.get('rating');
-        const comment = formData.get('comment');
-
-        if (!rating) {
-            alert('Please select a star rating.');
+        // The backend should verify ownership, but we can do a client-side check too.
+        if (booking.customerId !== userId || booking.status !== 'Completed' || booking.reviewLeft) {
+            formContainer.style.display = 'none';
+            authMessage.style.display = 'block';
+            authMessage.innerHTML = `
+                <h2>Review Not Allowed</h2>
+                <p>You cannot leave a review for this booking. It may not be completed or a review may have already been submitted.</p>
+                <a href="my-bookings.html" class="cta-btn">Back to My Bookings</a>
+            `;
             return;
         }
 
-        const newReview = {
-            reviewId: `review_${Date.now()}`,
-            bookingId: bookingId,
-            serviceId: serviceId,
-            providerId: providerId,
-            customerId: userId,
-            customerName: localStorage.getItem('agrohelp_user_name'),
-            rating: parseInt(rating),
-            comment: comment,
-            date: new Date().toISOString()
-        };
+        // Display service name (service should be populated)
+        if (booking.serviceId && booking.serviceId.name) {
+            serviceNameDisplay.textContent = `For service: "${booking.serviceId.name}"`;
+        }
 
-        // Save the new review
-        const reviews = JSON.parse(localStorage.getItem('agrohelp_reviews')) || [];
-        reviews.push(newReview);
-        localStorage.setItem('agrohelp_reviews', JSON.stringify(reviews));
+        // 4. Handle form submission
+        form.addEventListener('submit', async (event) => {
+            event.preventDefault();
+            const formData = new FormData(form);
+            const rating = formData.get('rating');
+            const comment = formData.get('comment');
 
-        // Mark the booking as having a review
-        const bookingIndex = allBookings.findIndex(b => b.bookingId === bookingId);
-        allBookings[bookingIndex].reviewLeft = true;
-        localStorage.setItem('agrohelp_bookings', JSON.stringify(allBookings));
+            if (!rating) {
+                alert('Please select a star rating.');
+                return;
+            }
 
-        alert('Thank you! Your review has been submitted.');
-        window.location.href = 'my-bookings.html';
-    });
+            const reviewData = {
+                bookingId: booking._id,
+                serviceId: booking.serviceId._id,
+                providerId: booking.providerId,
+                rating: parseInt(rating),
+                comment: comment,
+            };
+
+            try {
+                const reviewResponse = await fetch('/api/reviews', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify(reviewData)
+                });
+
+                if (!reviewResponse.ok) {
+                    const errorData = await reviewResponse.json();
+                    throw new Error(errorData.message || 'Failed to submit review.');
+                }
+
+                alert('Thank you! Your review has been submitted.');
+                window.location.href = 'my-bookings.html';
+            } catch (err) {
+                alert(`Error: ${err.message}`);
+            }
+        });
+    } catch (error) {
+        formContainer.innerHTML = `<p class="no-services-message">${error.message}</p>`;
+    }
 });

@@ -113,34 +113,53 @@ function populateTimeOptions() {
     }
 }
 
-function createBooking(serviceToBook, userId, userName) {
-    // TODO: This function needs to be refactored to send a POST request to a new '/api/bookings' endpoint.
-    // For now, it will continue to use localStorage to demonstrate the service data fetching is working.
+async function createBooking(serviceToBook, userId, userName) {
+    const confirmBookingBtn = document.getElementById('confirm-booking-btn');
     const requestedDate = document.getElementById('bookingDate').value;
     const requestedTime = document.getElementById('bookingTime').value;
     const paymentMethod = document.getElementById('paymentMethod').value;
+    const token = localStorage.getItem('agrohelp_token');
 
     if (!requestedDate) {
         alert('Please select a preferred date for your booking.');
         return;
     }
 
-    const newBooking = {
-        bookingId: `booking_${Date.now()}`,
-        serviceId: serviceToBook._id, // Use MongoDB's _id
+    // Disable button to prevent multiple clicks
+    confirmBookingBtn.disabled = true;
+    confirmBookingBtn.textContent = 'Sending Request...';
+
+    const bookingData = {
+        serviceId: serviceToBook._id,
         providerId: serviceToBook.providerId,
-        customerId: userId,
-        customerName: userName,
-        bookingDate: new Date().toISOString(),
         requestedDateTime: requestedTime ? `${requestedDate}T${requestedTime}` : requestedDate,
-        status: 'Pending',
         paymentMethod: paymentMethod
     };
 
-    const bookings = JSON.parse(localStorage.getItem('agrohelp_bookings')) || [];
-    bookings.push(newBooking);
-    localStorage.setItem('agrohelp_bookings', JSON.stringify(bookings));
+    try {
+        const response = await fetch('/api/bookings', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify(bookingData)
+        });
 
-    alert('Booking request sent! You can view your bookings in "My Bookings".');
-    window.location.href = 'my-bookings.html';
+        if (!response.ok) {
+            const errorData = await response.json();
+            // This handles the case where the service is no longer available, providing correct feedback.
+            throw new Error(errorData.message || 'Failed to create booking.');
+        }
+
+        alert('Booking request sent! You will be redirected to your bookings.');
+        window.location.href = 'my-bookings.html';
+
+    } catch (error) {
+        console.error('Booking failed:', error);
+        alert(`Error: ${error.message}`);
+        // Re-enable button on failure
+        confirmBookingBtn.disabled = false;
+        confirmBookingBtn.textContent = 'Confirm Booking';
+    }
 }

@@ -61,34 +61,40 @@ document.addEventListener('DOMContentLoaded', () => {
     loadProviderData();
 });
 
-function loadProviderBookings(myServices) {
-    const userId = localStorage.getItem('agrohelp_user_id');
+async function loadProviderBookings(myServices) {
     const bookingsGrid = document.getElementById('my-bookings-grid');
+    const token = localStorage.getItem('agrohelp_token');
     if (!bookingsGrid) return;
 
-    // TODO: This function also needs to be refactored to fetch bookings from an API endpoint
-    // like '/api/bookings/provider'. For now, we fix the service data lookup.
+    try {
+        // Fetch bookings for the provider's services from a new API endpoint.
+        const response = await fetch('/api/bookings/provider', {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        });
 
-    const allBookings = JSON.parse(localStorage.getItem('agrohelp_bookings')) || [];
-    
-    // This line is removed because `localStorage` no longer holds service data.
-    // We now use the `myServices` array passed into this function.
-    // const allServices = JSON.parse(localStorage.getItem('agrohelp_services')) || []; // This is broken.
+        if (!response.ok) {
+            throw new Error(`Failed to fetch bookings: ${response.statusText}`);
+        }
 
-    const myBookings = allBookings.filter(booking => booking.providerId === userId).sort((a, b) => new Date(b.bookingDate) - new Date(a.bookingDate));
+        const myBookings = await response.json();
 
-    if (myBookings.length === 0) {
-        bookingsGrid.innerHTML = `<p class="no-services-message">You have no bookings for your services yet.</p>`;
-    } else {
-        bookingsGrid.innerHTML = myBookings.map(booking => {
-            // Find the service from the fetched services array, matching MongoDB's _id.
-            // The old `s.id` check is replaced with `s._id`.
-            const service = myServices.find(s => s._id === booking.serviceId);
-            return createBookingCardForProvider(booking, service);
-        }).join('');
+        if (myBookings.length === 0) {
+            bookingsGrid.innerHTML = `<p class="no-services-message">You have no bookings for your services yet.</p>`;
+        } else {
+            bookingsGrid.innerHTML = myBookings.map(booking => {
+                // The service object should be populated by the backend API.
+                // We pass booking.serviceId which is now an object.
+                return createBookingCardForProvider(booking, booking.serviceId);
+            }).join('');
+        }
+
+        bookingsGrid.addEventListener('click', handleBookingAction);
+    } catch (error) {
+        console.error('Error loading provider bookings:', error);
+        bookingsGrid.innerHTML = `<p class="no-services-message" style="color: var(--error-red);">Could not load your bookings. Please try again later.</p>`;
     }
-
-    bookingsGrid.addEventListener('click', handleBookingAction);
 }
 
 function createDashboardServiceCard(service) {
@@ -117,10 +123,11 @@ function createDashboardServiceCard(service) {
     `;
 }
 
-function handleBookingAction(event) {
+async function handleBookingAction(event) {
     const target = event.target;
     const bookingId = target.dataset.bookingId;
-
+    const token = localStorage.getItem('agrohelp_token');
+    
     if (!bookingId) return;
 
     let newStatus = '';
@@ -159,26 +166,29 @@ function handleBookingAction(event) {
         return; // Not a relevant button click
     }
 
-    let allBookings = JSON.parse(localStorage.getItem('agrohelp_bookings')) || [];
-    const bookingIndex = allBookings.findIndex(b => b.bookingId === bookingId);
+    try {
+        const response = await fetch(`/api/bookings/${bookingId}/status`, {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify({ status: newStatus })
+        });
 
-    if (bookingIndex > -1) {
-        allBookings[bookingIndex].status = newStatus;
-
-        if (newStatus === 'Confirmed') {
-            const providerPhone = localStorage.getItem('agrohelp_user_phone');
-            if (providerPhone) {
-                allBookings[bookingIndex].providerPhone = providerPhone;
-            }
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.message || 'Failed to update booking status.');
         }
-
-        localStorage.setItem('agrohelp_bookings', JSON.stringify(allBookings));
 
         if (alertMessage) {
             alert(alertMessage);
         }
-
-        loadProviderBookings();
+        // Re-fetch all provider data to refresh both services and bookings lists
+        loadProviderData();
+    } catch (error) {
+        console.error('Error updating booking status:', error);
+        alert(`Error: ${error.message}`);
     }
 }
 
@@ -191,7 +201,7 @@ const renderStars = (rating) => {
 };
 
 function createBookingCardForProvider(booking, service) {
-    if (!service) return ''; // Don't render if service not found
+    if (!service) return ''; // Don't render if service (somehow) not populated
 
     let requestedDateTimeDisplay;
     if (booking.requestedDateTime) {
@@ -209,17 +219,17 @@ function createBookingCardForProvider(booking, service) {
 
     let reviewDisplay = '';
     if (booking.status === 'Completed' && booking.reviewLeft) {
-        const allReviews = JSON.parse(localStorage.getItem('agrohelp_reviews')) || [];
-        const review = allReviews.find(r => r.bookingId === booking.bookingId);
-        if (review) {
+        // The review should be populated by the backend along with the booking
+        if (booking.review) {
+            const review = booking.review;
             reviewDisplay = `
                 <div class="review-summary" style="margin-top: 1rem; border-top: 1px solid #eee; padding-top: 1rem;">
                     <div style="display: flex; justify-content: space-between; align-items: center;">
                         <span style="font-weight: 600;">Customer Review:</span>
-                        <button class="cta-btn-small view-review-btn" data-booking-id="${booking.bookingId}" style="padding: 0.3rem 0.8rem; font-size: 0.8rem;">View Details</button>
+                        <button class="cta-btn-small view-review-btn" data-booking-id="${booking._id}" style="padding: 0.3rem 0.8rem; font-size: 0.8rem;">View Details</button>
                     </div>
                     <div class="star-rating-display" style="font-size: 1.1rem; margin-top: 0.5rem;">${renderStars(review.rating)}</div>
-                    <p class="review-comment-details" id="review-details-${booking.bookingId}" style="display: none; margin-top: 10px; padding: 10px; background: #f9f9f9; border-radius: 8px; font-style: italic;">"${review.comment}"</p>
+                    <p class="review-comment-details" id="review-details-${booking._id}" style="display: none; margin-top: 10px; padding: 10px; background: #f9f9f9; border-radius: 8px; font-style: italic;">"${review.comment}"</p>
                 </div>
             `;
         }
@@ -229,16 +239,16 @@ function createBookingCardForProvider(booking, service) {
     if (booking.status === 'Pending') {
         statusDisplay = `
             <div class="booking-actions" style="display: flex; gap: 10px;">
-                <button class="cta-btn-small accept-btn" data-booking-id="${booking.bookingId}">Accept</button>
-                <button class="cta-btn-small decline-btn" data-booking-id="${booking.bookingId}" style="background-color: #c0392b;">Decline</button>
+                <button class="cta-btn-small accept-btn" data-booking-id="${booking._id}">Accept</button>
+                <button class="cta-btn-small decline-btn" data-booking-id="${booking._id}" style="background-color: #c0392b;">Decline</button>
             </div>
         `;
     } else if (booking.status === 'Confirmed') {
-        statusDisplay = `<button class="cta-btn-small complete-service-btn" data-booking-id="${booking.bookingId}" style="background-color: #2980b9;">Mark as Complete</button>`;
+        statusDisplay = `<button class="cta-btn-small complete-service-btn" data-booking-id="${booking._id}" style="background-color: #2980b9;">Mark as Complete</button>`;
     } else if (booking.status === 'Awaiting Customer Confirmation') {
         statusDisplay = `<span class="booking-status" style="color: var(--text-muted); font-weight: 600;">Waiting for Customer</span>`;
     } else if (booking.status === 'Awaiting Payment Confirmation') {
-        statusDisplay = `<button class="cta-btn-small confirm-payment-btn" data-booking-id="${booking.bookingId}">Confirm Payment</button>`;
+        statusDisplay = `<button class="cta-btn-small confirm-payment-btn" data-booking-id="${booking._id}">Confirm Payment</button>`;
     } else if (booking.status === 'Completed') {
         const statusColor = 'var(--deep-sage)';
         statusDisplay = `<span class="booking-status" style="color: ${statusColor}; font-weight: 600;">Status: Completed</span>`;
