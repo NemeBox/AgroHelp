@@ -267,7 +267,7 @@ router.get('/bookings/mine', authMiddleware, async (req, res) => {
         populate: {
           path: 'providerId', model: 'User', select: 'name'
         }
-      .sort({ createdAt: -1 });
+      }).sort({ createdAt: -1 });
     res.status(200).json(bookings);
   } catch (error) {
     console.error('Error fetching customer bookings:', error);
