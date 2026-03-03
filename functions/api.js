@@ -462,6 +462,52 @@ router.get('/services/:id', async (req, res) => {
   }
 });
 
+// --- NEW: UPDATE A SERVICE ---
+// Handles PUT /api/services/:id
+router.put('/services/:id', authMiddleware, async (req, res) => {
+  try {
+    const { id } = req.params;
+    const providerId = req.user.id;
+
+    // Atomically find and update the document, ensuring it belongs to the provider.
+    const updatedService = await Service.findOneAndUpdate(
+      { _id: id, providerId: providerId }, // Query to find the correct document
+      req.body, // The update data
+      { new: true } // Option to return the updated document
+    );
+
+    if (!updatedService) {
+      return res.status(404).json({ message: 'Service not found or you do not have permission to edit it.' });
+    }
+
+    res.status(200).json(updatedService);
+  } catch (error) {
+    console.error('Error updating service:', error);
+    res.status(500).json({ message: `Server error while updating service: ${error.message}` });
+  }
+});
+
+// --- NEW: DELETE A SERVICE ---
+// Handles DELETE /api/services/:id
+router.delete('/services/:id', authMiddleware, async (req, res) => {
+  try {
+    const { id } = req.params;
+    const providerId = req.user.id;
+
+    // Use findOneAndDelete to ensure the service belongs to the provider.
+    const service = await Service.findOneAndDelete({ _id: id, providerId: providerId });
+
+    if (!service) {
+      return res.status(404).json({ message: 'Service not found or you do not have permission to delete it.' });
+    }
+
+    res.status(200).json({ message: 'Service deleted successfully.' });
+  } catch (error) {
+    console.error('Error deleting service:', error);
+    res.status(500).json({ message: `Server error while deleting service: ${error.message}` });
+  }
+});
+
 // --- REVIEW ROUTES ---
 // Handles POST /api/reviews
 router.post('/reviews', authMiddleware, async (req, res) => {

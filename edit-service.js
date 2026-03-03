@@ -43,7 +43,9 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         // The backend already secures the endpoints, but this provides a quick UI feedback.
         const userId = localStorage.getItem('agrohelp_user_id');
-        if (serviceToEdit.providerId !== userId) {
+        // The providerId from the populated service is an object { _id: '...', name: '...' }.
+        // We need to compare its _id property with the userId string from localStorage.
+        if (!serviceToEdit.providerId || serviceToEdit.providerId._id.toString() !== userId) {
             throw new Error('You do not have permission to edit this service.');
         }
 
