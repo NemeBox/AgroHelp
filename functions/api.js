@@ -270,7 +270,7 @@ router.get('/bookings/mine', authMiddleware, async (req, res) => {
       .populate({
         path: 'serviceId',
         populate: {
-          path: 'providerId', model: 'User', select: 'name'
+          path: 'providerId', model: 'User', select: 'name phone'
         }
       }).sort({ createdAt: -1 });
     res.status(200).json(bookings);

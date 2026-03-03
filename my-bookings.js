@@ -112,7 +112,7 @@ function createBookingCardForCustomer(booking, service) {
                 <div class="card-body">
                     <h3 class="card-title" style="color: #999;">Booked Service (Details Unavailable)</h3>
                     <p class="card-provider">Booking ID: ${booking._id}</p>
-                    <p class="card-description">Booked on: ${new Date(booking.bookingDate).toLocaleDateString()}</p>
+                    <p class="card-description">Booked on: ${new Date(booking.createdAt).toLocaleDateString()}</p>
                 </div>
             </div>
         `;
@@ -129,14 +129,14 @@ function createBookingCardForCustomer(booking, service) {
             requestedDateTimeDisplay = `<strong>${requestedDate} (Any Time)</strong>`;
         }
     } else {
-        requestedDateTimeDisplay = `On ${new Date(booking.bookingDate).toLocaleDateString('en-GB')}`;
+        requestedDateTimeDisplay = `On ${new Date(booking.createdAt).toLocaleDateString('en-GB')}`;
     }
 
     let providerContactInfo = '';
-    if (booking.status === 'Confirmed' && booking.providerPhone) {
+    if (booking.status === 'Confirmed' && service.providerId && service.providerId.phone) {
         providerContactInfo = `
             <p class="card-provider" style="margin-top: 10px; color: var(--deep-sage); font-weight: 600;">
-                <i class="fa-solid fa-phone"></i> Contact: ${booking.providerPhone}
+                <i class="fa-solid fa-phone"></i> Contact: ${service.providerId.phone}
             </p>
         `;
     }
@@ -166,7 +166,7 @@ function createBookingCardForCustomer(booking, service) {
                 actionArea = `<span class="booking-status" style="color: ${statusColor}; font-weight: 600;">Review Submitted</span>`;
             } else {
                 // Use booking._id and service._id from the database for the review link
-                actionArea = `<a href="review.html?bookingId=${booking._id}&providerId=${service.providerId}&serviceId=${service._id}" class="cta-btn-small">Leave a Review</a>`;
+                actionArea = `<a href="review.html?bookingId=${booking._id}&providerId=${service.providerId._id}&serviceId=${service._id}" class="cta-btn-small">Leave a Review</a>`;
             }
             break;
         case 'Declined':
