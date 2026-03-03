@@ -1,8 +1,22 @@
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
+const mongoose = require('mongoose');
 const userRoutes = require('./userRoutes');
 // const productRoutes = require('./productRoutes'); // Temporarily disabled for debugging
+
+// --- Database Connection ---
+const dbUri = process.env.MONGODB_URI;
+
+if (!dbUri) {
+  console.error('FATAL ERROR: MONGODB_URI is not defined.');
+  process.exit(1); // Exit the process with an error code
+}
+
+mongoose.connect(dbUri)
+  .then(() => console.log('MongoDB connection successful.'))
+  .catch(err => console.error('MongoDB connection error:', err));
+
 
 // express app
 const app = express();

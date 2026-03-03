@@ -1,11 +1,9 @@
-# Netlify Build & Deploy Settings
+# This file configures your Netlify deployment.
 
 [build]
-  command = "npm install" # Installs backend dependencies
-  publish = "."           # Publishes the root directory containing your HTML files
-  functions = "functions" # Specifies the directory for serverless functions
+  functions = "functions" # Specifies the directory for serverless functions.
 
 [[redirects]]
-  from = "/api/*"
-  to = "/.netlify/functions/api/:splat"
-  status = 200
+  from = "/api/*" # Any request starting with /api/...
+  to = "/.netlify/functions/api/:splat" # ...will be sent to our api.js function.
+  status = 200 # This makes it act as a proxy.
