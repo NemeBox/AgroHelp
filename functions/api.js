@@ -7,10 +7,9 @@ const mongoose = require('mongoose');
 
 // --- IMPORTANT ---
 // You will need to define your Mongoose models (Schema) and import them here.
-// Example:
-// const Service = require('../models/Service');
-// const User = require('../models/User');
-// const Booking = require('../models/Booking');
+const Service = mongoose.models.Service || mongoose.model('Service', new mongoose.Schema({ providerId: mongoose.Schema.Types.ObjectId, name: String, price: Number, category: String, description: String, imageUrl: String }));
+const User = mongoose.models.User || mongoose.model('User', new mongoose.Schema({ name: String, role: String }));
+const Booking = mongoose.models.Booking || mongoose.model('Booking', new mongoose.Schema({ serviceId: { type: mongoose.Schema.Types.ObjectId, ref: 'Service' }, customerId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' }, providerId: mongoose.Schema.Types.ObjectId, customerName: String, requestedDateTime: String, paymentMethod: String, status: String, reviewLeft: Boolean, review: { type: mongoose.Schema.Types.ObjectId, ref: 'Review' } }, { timestamps: true }));
 //
 // You also need to set up your MongoDB connection.
 // It's best to do this once and reuse the connection.
@@ -38,8 +37,10 @@ app.use(cors());
 // This function would verify the JWT token from the 'Authorization' header.
 const authMiddleware = (req, res, next) => {
   // TODO: Implement JWT verification.
-  // For now, we'll simulate a user ID for testing.
-  // req.user = { id: 'some-user-id-from-token' };
+  // For now, we'll simulate a user ID for testing. Replace this ID
+  // with a real provider's _id from your User collection in MongoDB.
+  // Example: req.user = { id: '65b12345abcdef1234567890' };
+  req.user = { id: 'some-user-id-from-token' };
   console.log('Auth middleware (placeholder) - allowing request.');
   next();
 };
@@ -96,9 +97,21 @@ router.get('/bookings/:id', authMiddleware, async (req, res) => {
 // Handles GET /api/bookings/provider
 router.get('/bookings/provider', authMiddleware, async (req, res) => {
   try {
-    // TODO: Fetch bookings for the logged-in provider's services.
-    console.log('Fetching bookings for the current provider.');
-    res.status(200).json([]); // Return empty array
+    // This is a placeholder user ID. This should come from your real auth middleware.
+    const providerId = req.user.id;
+
+    // 1. Find all services offered by the logged-in provider.
+    const providerServices = await Service.find({ providerId: providerId }).select('_id');
+    const serviceIds = providerServices.map(s => s._id);
+
+    // 2. Find all bookings for those services.
+    // We populate 'serviceId' to get service details and 'customerId' to get the customer's name.
+    const bookings = await Booking.find({ serviceId: { $in: serviceIds } })
+      .populate('serviceId')
+      .populate({ path: 'customerId', select: 'name' }) // Only select the 'name' field from the User model
+      .sort({ createdAt: -1 });
+
+    res.status(200).json(bookings);
   } catch (error) {
     res.status(500).json({ message: 'Server error while fetching provider bookings.' });
   }

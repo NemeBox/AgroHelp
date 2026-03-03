@@ -262,7 +262,7 @@ function createBookingCardForProvider(booking, service) {
         <div class="service-card booking-card">
             <div class="card-body">
                 <h3 class="card-title">Booking for: ${service.name}</h3>
-                <p class="card-provider">Booked by: ${booking.customerName}</p>
+                <p class="card-provider">Booked by: ${booking.customerId ? booking.customerId.name : 'N/A'}</p>
                 <p class="card-description" style="margin-bottom: 0.5rem;">Requested for: ${requestedDateTimeDisplay}</p>
                 <p class="card-description" style="font-weight: 600;">Payment Method: ${booking.paymentMethod || 'Not specified'}</p>
                 <div class="card-footer">
