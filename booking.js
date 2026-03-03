@@ -125,6 +125,14 @@ async function createBooking(serviceToBook, userId, userName) {
         return;
     }
 
+    // Add a check to ensure the provider information is available before booking
+    if (!serviceToBook.providerId || !serviceToBook.providerId._id) {
+        alert('This service cannot be booked at the moment because provider details are missing. Please try another service.');
+        confirmBookingBtn.disabled = false;
+        confirmBookingBtn.textContent = 'Confirm Booking';
+        return;
+    }
+
     // Disable button to prevent multiple clicks
     confirmBookingBtn.disabled = true;
     confirmBookingBtn.textContent = 'Sending Request...';
