@@ -340,7 +340,7 @@ router.patch('/bookings/:id/status', authMiddleware, async (req, res) => {
 
     // Authorization: Only provider can update status (except customer confirmation)
     // Allow customer to confirm completion, otherwise only provider can update.
-    if (booking.providerId.toString() !== req.user.id && !(status === 'Awaiting Customer Confirmation' && booking.customerId.toString() === req.user.id)) {
+    if (booking.providerId.toString() !== req.user.id && !(status === 'Awaiting Payment Confirmation' && booking.customerId.toString() === req.user.id)) {
       return res.status(403).json({ message: 'Unauthorized to update this booking status.' });
     }
     const updatedBooking = await Booking.findByIdAndUpdate(id, { status }, { new: true }); // Update status
