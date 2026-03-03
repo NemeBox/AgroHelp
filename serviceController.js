@@ -1,5 +1,6 @@
 const Service = require('./serviceModel');
 const mongoose = require('mongoose');
+const User = require('./userModel'); // We need the User model to look up the provider's name.
 
 // GET all public services
 const getAllServices = async (req, res) => {
@@ -40,9 +41,18 @@ const createService = async (req, res) => {
     const { name, category, description, price, stock, imageUrl } = req.body;
 
     try {
+        // The user ID is attached to the request by the requireAuth middleware.
         const providerId = req.user._id;
-        const providerName = req.user.name;
-        const service = await Service.create({ name, category, description, price, stock, imageUrl, providerId, providerName });
+
+        // The error "providerName is required" happens because req.user.name is undefined.
+        // This is likely because the requireAuth middleware isn't fetching the 'name' field.
+        // The correct long-term fix is in that middleware, but we can fix it here by fetching the user.
+        const provider = await User.findById(providerId).select('name').lean();
+        if (!provider) {
+            return res.status(401).json({ error: 'Provider account not found for this token.' });
+        }
+
+        const service = await Service.create({ name, category, description, price, stock, imageUrl, providerId, providerName: provider.name });
         res.status(201).json(service);
     } catch (error) {
         res.status(400).json({ error: error.message });
