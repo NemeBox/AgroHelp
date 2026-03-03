@@ -190,7 +190,7 @@ function createBookingCardForCustomer(booking, service) {
             </div>
             <div class="card-body">
                 <h3 class="card-title">${service.name}</h3>
-                <p class="card-provider">Provider: ${service.providerName}</p>
+                <p class="card-provider">Provider: ${service.providerId ? service.providerId.name : 'N/A'}</p>
                 <p class="card-description" style="margin-bottom: 0.5rem;">Requested for: ${requestedDateTimeDisplay}</p>
                 ${providerContactInfo}
                 ${paymentMethodInfo}

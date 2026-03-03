@@ -7,9 +7,13 @@ const mongoose = require('mongoose');
 
 // --- IMPORTANT ---
 // You will need to define your Mongoose models (Schema) and import them here.
-const Service = mongoose.models.Service || mongoose.model('Service', new mongoose.Schema({ providerId: mongoose.Schema.Types.ObjectId, name: String, price: Number, category: String, description: String, imageUrl: String }));
-const User = mongoose.models.User || mongoose.model('User', new mongoose.Schema({ name: String, role: String }));
-const Booking = mongoose.models.Booking || mongoose.model('Booking', new mongoose.Schema({ serviceId: { type: mongoose.Schema.Types.ObjectId, ref: 'Service' }, customerId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' }, providerId: mongoose.Schema.Types.ObjectId, customerName: String, requestedDateTime: String, paymentMethod: String, status: String, reviewLeft: Boolean, review: { type: mongoose.Schema.Types.ObjectId, ref: 'Review' } }, { timestamps: true }));
+const ServiceSchema = new mongoose.Schema({ providerId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true }, name: { type: String, required: true }, price: { type: Number, required: true }, category: String, description: String, imageUrl: String });
+const UserSchema = new mongoose.Schema({ name: String, role: String, email: String });
+const BookingSchema = new mongoose.Schema({ serviceId: { type: mongoose.Schema.Types.ObjectId, ref: 'Service', required: true }, customerId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true }, providerId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true }, requestedDateTime: String, paymentMethod: String, status: { type: String, default: 'Pending' }, reviewLeft: { type: Boolean, default: false }, review: { type: mongoose.Schema.Types.ObjectId, ref: 'Review' } }, { timestamps: true });
+
+const Service = mongoose.models.Service || mongoose.model('Service', ServiceSchema);
+const User = mongoose.models.User || mongoose.model('User', UserSchema);
+const Booking = mongoose.models.Booking || mongoose.model('Booking', BookingSchema);
 //
 // You also need to set up your MongoDB connection.
 // It's best to do this once and reuse the connection.
@@ -19,8 +23,8 @@ async function connectToDatabase() {
     return;
   }
   // Your MONGO_URI should be in Netlify's environment variables
-  // await mongoose.connect(process.env.MONGO_URI);
-  // cachedDb = mongoose.connection;
+  await mongoose.connect(process.env.MONGODB_URI);
+  cachedDb = mongoose.connection;
 }
 
 const app = express();
@@ -38,16 +42,18 @@ app.use(cors());
 const authMiddleware = (req, res, next) => {
   // TODO: Implement JWT verification.
   // For now, we'll simulate a user ID for testing. Replace this ID
-  // with a real provider's _id from your User collection in MongoDB.
-  // Example: req.user = { id: '65b12345abcdef1234567890' };
-  req.user = { id: 'some-user-id-from-token' };
+  // with a real user's _id from your User collection in MongoDB to test.
+  // This ID must be a valid 24-character hex string.
+  // Example provider ID: '65c51234567890abcdef1234'
+  // Example customer ID: '65c5fedcba0987654321fedc'
+  req.user = { id: '65c51234567890abcdef1234' }; // Using a provider ID for testing dashboard
   console.log('Auth middleware (placeholder) - allowing request.');
   next();
 };
 
 router.use(async (req, res, next) => {
-  // This is a placeholder. You should implement your DB connection.
-  // await connectToDatabase();
+  // Connect to the database on every request.
+  await connectToDatabase();
   next();
 });
 
@@ -55,9 +61,19 @@ router.use(async (req, res, next) => {
 // Handles POST /api/bookings
 router.post('/bookings', authMiddleware, async (req, res) => {
   try {
-    // TODO: Save the booking to your database using req.body and req.user.id
-    console.log('Received booking data:', req.body);
-    res.status(201).json({ message: 'Booking created successfully!', data: req.body });
+    const customerId = req.user.id;
+    const { serviceId, providerId, requestedDateTime, paymentMethod } = req.body;
+
+    const newBooking = new Booking({
+      customerId,
+      serviceId,
+      providerId,
+      requestedDateTime,
+      paymentMethod,
+      status: 'Pending' // Initial status
+    });
+    await newBooking.save();
+    res.status(201).json(newBooking);
   } catch (error) {
     console.error('Error creating booking:', error);
     res.status(500).json({ message: 'Server error while creating booking.' });
@@ -68,12 +84,18 @@ router.post('/bookings', authMiddleware, async (req, res) => {
 // Handles GET /api/bookings/mine
 router.get('/bookings/mine', authMiddleware, async (req, res) => {
   try {
-    // TODO: Fetch bookings from DB for the logged-in customer (req.user.id)
-    // and use .populate('serviceId') to attach service details.
-    console.log('Fetching bookings for the current customer.');
-    // Returning sample data for now.
-    const sampleBookings = []; // Return an empty array to show "No bookings yet"
-    res.status(200).json(sampleBookings);
+    const customerId = req.user.id;
+
+    // Find all bookings for the logged-in customer and populate service details.
+    const bookings = await Booking.find({ customerId: customerId })
+      .populate({
+        path: 'serviceId',
+        populate: {
+          path: 'providerId', model: 'User', select: 'name'
+        }
+      })
+      .sort({ createdAt: -1 });
+    res.status(200).json(bookings);
   } catch (error) {
     console.error('Error fetching customer bookings:', error);
     res.status(500).json({ message: 'Server error while fetching bookings.' });
@@ -84,8 +106,7 @@ router.get('/bookings/mine', authMiddleware, async (req, res) => {
 // Handles GET /api/bookings/provider
 router.get('/bookings/provider', authMiddleware, async (req, res) => {
   try {
-    // This is a placeholder user ID. This should come from your real auth middleware.
-    const providerId = req.user.id;
+    const providerId = req.user.id; // This now uses a valid ObjectId string from the middleware
 
     // 1. Find all services offered by the logged-in provider.
     const providerServices = await Service.find({ providerId: providerId }).select('_id');
@@ -100,7 +121,7 @@ router.get('/bookings/provider', authMiddleware, async (req, res) => {
 
     res.status(200).json(bookings);
   } catch (error) {
-    res.status(500).json({ message: 'Server error while fetching provider bookings.' });
+    res.status(500).json({ message: `Server error while fetching provider bookings: ${error.message}` });
   }
 });
 
@@ -108,10 +129,12 @@ router.get('/bookings/provider', authMiddleware, async (req, res) => {
 // Handles GET /api/bookings/:id
 router.get('/bookings/:id', authMiddleware, async (req, res) => {
   try {
-    // TODO: Fetch a single booking by its ID from the DB.
-    // This is needed for the review page to validate the booking.
-    console.log(`Fetching booking with ID: ${req.params.id}`);
-    res.status(200).json({ _id: req.params.id, status: 'Completed', customerId: 'some-user-id-from-token', serviceId: { name: 'Sample Service for Review' } });
+    const booking = await Booking.findById(req.params.id).populate('serviceId');
+    if (!booking) {
+      return res.status(404).json({ message: 'Booking not found.' });
+    }
+    // Add security check: ensure the user requesting is the customer or provider.
+    res.status(200).json(booking);
   } catch (error) {
     res.status(500).json({ message: 'Server error while fetching booking.' });
   }
@@ -123,9 +146,13 @@ router.patch('/bookings/:id/status', authMiddleware, async (req, res) => {
   try {
     const { id } = req.params;
     const { status } = req.body;
-    // TODO: Find booking by ID and update its status in the DB.
-    console.log(`Updating booking ${id} to status: ${status}`);
-    res.status(200).json({ message: 'Status updated successfully.' });
+    // Add security checks here to ensure the user is authorized to update.
+    const updatedBooking = await Booking.findByIdAndUpdate(id, { status }, { new: true });
+    if (!updatedBooking) {
+      return res.status(404).json({ message: 'Booking not found.' });
+    }
+
+    res.status(200).json(updatedBooking);
   } catch (error) {
     res.status(500).json({ message: 'Server error while updating booking status.' });
   }
@@ -134,22 +161,30 @@ router.patch('/bookings/:id/status', authMiddleware, async (req, res) => {
 // --- SERVICE ROUTES ---
 // Handles GET /api/services (for public listing)
 router.get('/services', async (req, res) => {
-  // TODO: Fetch all available services from the database.
-  console.log('Fetching all public services.');
-  res.status(200).json([]); // Return empty array
+  try {
+    // Fetch all services and populate the provider's name from the User model.
+    const services = await Service.find({})
+      .populate({ path: 'providerId', select: 'name' }); // Populate provider's name
+    res.status(200).json(services);
+  } catch (error) {
+    console.error('Error fetching public services:', error);
+    res.status(500).json({ message: 'Server error while fetching services.' });
+  }
 });
 
 // --- NEW: CREATE A NEW SERVICE ---
 // Handles POST /api/services
 router.post('/services', authMiddleware, async (req, res) => {
   try {
-    // TODO: Add logic to create a new service in the database.
-    // The provider's ID should come from the authenticated user (req.user.id).
-    console.log('Received new service data:', req.body);
-    res.status(201).json({ message: 'Service created successfully!', data: req.body });
+    const providerId = req.user.id;
+    const serviceData = { ...req.body, providerId };
+
+    const newService = new Service(serviceData);
+    await newService.save();
+    res.status(201).json(newService);
   } catch (error) {
     console.error('Error creating service:', error);
-    res.status(500).json({ message: 'Server error while creating service.' });
+    res.status(500).json({ message: `Server error while creating service: ${error.message}` });
   }
 });
 
@@ -157,9 +192,12 @@ router.post('/services', authMiddleware, async (req, res) => {
 // Handles GET /api/services/provider/mine
 router.get('/services/provider/mine', authMiddleware, async (req, res) => {
   try {
-    // TODO: Fetch services from DB for the logged-in provider (req.user.id).
-    console.log('Fetching services for the current provider.');
-    res.status(200).json([]); // Return empty array
+    const providerId = req.user.id;
+    // Fetch services from DB for the logged-in provider.
+    const services = await Service.find({ providerId: providerId })
+      .sort({ name: 1 });
+
+    res.status(200).json(services);
   } catch (error) {
     res.status(500).json({ message: 'Server error while fetching provider services.' });
   }
@@ -167,9 +205,15 @@ router.get('/services/provider/mine', authMiddleware, async (req, res) => {
 
 // Handles GET /api/services/:id
 router.get('/services/:id', async (req, res) => {
-  // TODO: Fetch the actual service from your database.
-  console.log(`Fetching service with ID: ${req.params.id}`);
-  res.status(200).json({ _id: req.params.id, name: 'Sample Service', providerName: 'Sample Provider', price: 500, description: 'This is a sample service description.' });
+  try {
+    const service = await Service.findById(req.params.id).populate({ path: 'providerId', select: 'name' });
+    if (!service) {
+      return res.status(404).json({ message: 'Service not found.' });
+    }
+    res.status(200).json(service);
+  } catch (error) {
+    res.status(500).json({ message: 'Server error while fetching service.' });
+  }
 });
 
 // --- REVIEW ROUTES ---

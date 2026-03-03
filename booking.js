@@ -55,7 +55,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             <div class="service-card" style="margin-top: 1.5rem;">
                 <div class="card-body">
                     <h3 class="card-title">${serviceToBook.name}</h3>
-                    <p class="card-provider">Provider: ${serviceToBook.providerName}</p>
+                    <p class="card-provider">Provider: ${serviceToBook.providerId ? serviceToBook.providerId.name : 'N/A'}</p>
                     <p class="card-description">${serviceToBook.description || 'No description provided.'}</p>
                     <div class="card-footer">
                         <span class="card-price">Price: ₹${parseFloat(serviceToBook.price).toFixed(2)}</span>
@@ -131,7 +131,7 @@ async function createBooking(serviceToBook, userId, userName) {
 
     const bookingData = {
         serviceId: serviceToBook._id,
-        providerId: serviceToBook.providerId,
+        providerId: serviceToBook.providerId._id, // Pass the ID, not the object
         requestedDateTime: requestedTime ? `${requestedDate}T${requestedTime}` : requestedDate,
         paymentMethod: paymentMethod
     };

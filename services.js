@@ -42,7 +42,7 @@ function createPublicServiceCard(service) {
             </div>
             <div class="card-body">
                 <h3 class="card-title">${service.name}</h3>
-                <p class="card-provider">Provider: ${service.providerName}</p>
+                <p class="card-provider">Provider: ${service.providerId ? service.providerId.name : 'N/A'}</p>
                 <p class="card-description">${service.description || 'No description provided.'}</p>
                 <div class="card-footer">
                     <span class="card-price">₹${parseFloat(service.price).toFixed(2)}</span>
