@@ -93,8 +93,13 @@ const authMiddleware = (req, res, next) => {
 };
 
 router.use(async (req, res, next) => {
-  await connectToDatabase();
-  next();
+  try {
+    await connectToDatabase();
+    next();
+  } catch (error) {
+    console.error('Database connection failed:', error);
+    return res.status(503).json({ message: 'Service temporarily unavailable. Failed to connect to the database.' });
+  }
 });
 
 // --- USER AUTHENTICATION ROUTES ---
@@ -312,7 +317,7 @@ router.get('/bookings/:id', authMiddleware, async (req, res) => {
     }
 
     // Security check: ensure the user requesting is the customer or provider.
-    if (booking.customerId._id.toString() !== req.user.id && booking.providerId._id.toString() !== req.user.id) {
+    if (booking.customerId._id.toString() !== req.user.id && booking.providerId.toString() !== req.user.id) {
       return res.status(403).json({ message: 'Unauthorized to view this booking.' });
     }
 
@@ -335,7 +340,7 @@ router.patch('/bookings/:id/status', authMiddleware, async (req, res) => {
 
     // Authorization: Only provider can update status (except customer confirmation)
     // Allow customer to confirm completion, otherwise only provider can update.
-    if (booking.providerId.toString() !== req.user.id && !(status === 'Awaiting Customer Confirmation' && booking.customerId._id.toString() === req.user.id)) {
+    if (booking.providerId.toString() !== req.user.id && !(status === 'Awaiting Customer Confirmation' && booking.customerId.toString() === req.user.id)) {
       return res.status(403).json({ message: 'Unauthorized to update this booking status.' });
     }
     const updatedBooking = await Booking.findByIdAndUpdate(id, { status }, { new: true }); // Update status
@@ -460,7 +465,7 @@ router.post('/reviews', authMiddleware, async (req, res) => {
       return res.status(404).json({ message: 'Booking not found.' });
     }
     // Ensure the customer ID from the token matches the booking's customer ID
-    if (booking.customerId._id.toString() !== customerId) {
+    if (booking.customerId.toString() !== customerId) {
       return res.status(403).json({ message: 'Unauthorized to review this booking.' });
     }
     // Ensure the booking is completed
