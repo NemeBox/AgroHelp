@@ -126,6 +126,20 @@ router.get('/services', async (req, res) => {
   res.status(200).json([]); // Return empty array
 });
 
+// --- NEW: CREATE A NEW SERVICE ---
+// Handles POST /api/services
+router.post('/services', authMiddleware, async (req, res) => {
+  try {
+    // TODO: Add logic to create a new service in the database.
+    // The provider's ID should come from the authenticated user (req.user.id).
+    console.log('Received new service data:', req.body);
+    res.status(201).json({ message: 'Service created successfully!', data: req.body });
+  } catch (error) {
+    console.error('Error creating service:', error);
+    res.status(500).json({ message: 'Server error while creating service.' });
+  }
+});
+
 // --- NEW: FETCH PROVIDER'S OWN SERVICES ---
 // Handles GET /api/services/provider/mine
 router.get('/services/provider/mine', authMiddleware, async (req, res) => {
