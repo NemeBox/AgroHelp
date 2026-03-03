@@ -53,9 +53,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         form.elements['name'].value = serviceToEdit.name || '';
         form.elements['category'].value = serviceToEdit.category || '';
         form.elements['price'].value = serviceToEdit.price || '';
-        form.elements['stock'].value = serviceToEdit.stock || '';
         form.elements['description'].value = serviceToEdit.description || '';
-        form.elements['imageUrl'].value = serviceToEdit.imageUrl || '';
 
     } catch (error) {
         formContainer.style.display = 'none';
@@ -77,9 +75,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             name: formData.get('name'),
             category: formData.get('category'),
             price: formData.get('price'),
-            stock: formData.get('stock'),
             description: formData.get('description'),
-            imageUrl: formData.get('imageUrl'),
         };
 
         try {

@@ -21,8 +21,6 @@ document.addEventListener('DOMContentLoaded', () => {
             category: formData.get('category'),
             description: formData.get('description'),
             price: formData.get('price'),
-            stock: formData.get('stock'),
-            imageUrl: formData.get('imageUrl'),
         };
 
         if (!serviceData.name || !serviceData.category || !serviceData.price) {
