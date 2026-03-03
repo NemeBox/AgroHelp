@@ -80,19 +80,6 @@ router.get('/bookings/mine', authMiddleware, async (req, res) => {
   }
 });
 
-// --- NEW: FETCH A SINGLE BOOKING ---
-// Handles GET /api/bookings/:id
-router.get('/bookings/:id', authMiddleware, async (req, res) => {
-  try {
-    // TODO: Fetch a single booking by its ID from the DB.
-    // This is needed for the review page to validate the booking.
-    console.log(`Fetching booking with ID: ${req.params.id}`);
-    res.status(200).json({ _id: req.params.id, status: 'Completed', customerId: 'some-user-id-from-token', serviceId: { name: 'Sample Service for Review' } });
-  } catch (error) {
-    res.status(500).json({ message: 'Server error while fetching booking.' });
-  }
-});
-
 // --- NEW: FETCH PROVIDER'S BOOKINGS ---
 // Handles GET /api/bookings/provider
 router.get('/bookings/provider', authMiddleware, async (req, res) => {
@@ -114,6 +101,19 @@ router.get('/bookings/provider', authMiddleware, async (req, res) => {
     res.status(200).json(bookings);
   } catch (error) {
     res.status(500).json({ message: 'Server error while fetching provider bookings.' });
+  }
+});
+
+// --- NEW: FETCH A SINGLE BOOKING ---
+// Handles GET /api/bookings/:id
+router.get('/bookings/:id', authMiddleware, async (req, res) => {
+  try {
+    // TODO: Fetch a single booking by its ID from the DB.
+    // This is needed for the review page to validate the booking.
+    console.log(`Fetching booking with ID: ${req.params.id}`);
+    res.status(200).json({ _id: req.params.id, status: 'Completed', customerId: 'some-user-id-from-token', serviceId: { name: 'Sample Service for Review' } });
+  } catch (error) {
+    res.status(500).json({ message: 'Server error while fetching booking.' });
   }
 });
 
