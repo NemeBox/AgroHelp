@@ -46,35 +46,44 @@ document.addEventListener('DOMContentLoaded', () => {
                     servicesGrid.insertAdjacentHTML('beforeend', serviceCardHTML);
                 });
             }
+            // Load bookings after services have been fetched, passing the services array
+            loadProviderBookings(myServices);
         } catch (error) {
             console.error('Error loading services:', error);
             servicesGrid.innerHTML = `<p class="no-services-message" style="color: var(--error-red);">Could not load your services. Please try again later.</p>`;
+            // Still attempt to load bookings, which might show an empty state correctly
+            loadProviderBookings([]);
         }
     }
 
     // Load bookings for the expert's services
-    loadProviderBookings();
+    // This is now called from within loadProviderData() to ensure services are available.
     loadProviderData();
 });
 
-function loadProviderBookings() {
+function loadProviderBookings(myServices) {
     const userId = localStorage.getItem('agrohelp_user_id');
     const bookingsGrid = document.getElementById('my-bookings-grid');
     if (!bookingsGrid) return;
 
     // TODO: This function also needs to be refactored to fetch bookings from an API endpoint
-    // like '/api/bookings/provider' instead of using localStorage.
-    // For now, we will leave the old logic to be updated later.
+    // like '/api/bookings/provider'. For now, we fix the service data lookup.
 
     const allBookings = JSON.parse(localStorage.getItem('agrohelp_bookings')) || [];
-    const allServices = JSON.parse(localStorage.getItem('agrohelp_services')) || []; // Temporary
+    
+    // This line is removed because `localStorage` no longer holds service data.
+    // We now use the `myServices` array passed into this function.
+    // const allServices = JSON.parse(localStorage.getItem('agrohelp_services')) || []; // This is broken.
+
     const myBookings = allBookings.filter(booking => booking.providerId === userId).sort((a, b) => new Date(b.bookingDate) - new Date(a.bookingDate));
 
     if (myBookings.length === 0) {
         bookingsGrid.innerHTML = `<p class="no-services-message">You have no bookings for your services yet.</p>`;
     } else {
         bookingsGrid.innerHTML = myBookings.map(booking => {
-            const service = allServices.find(s => s.id === booking.serviceId);
+            // Find the service from the fetched services array, matching MongoDB's _id.
+            // The old `s.id` check is replaced with `s._id`.
+            const service = myServices.find(s => s._id === booking.serviceId);
             return createBookingCardForProvider(booking, service);
         }).join('');
     }
