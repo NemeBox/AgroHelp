@@ -5,25 +5,18 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
     }
 
-    form.addEventListener('submit', (event) => {
+    form.addEventListener('submit', async (event) => {
         event.preventDefault();
 
-        const formData = new FormData(form);
-        const user = {
-            id: localStorage.getItem('agrohelp_user_id'),
-            name: localStorage.getItem('agrohelp_user_name')
-        };
-
-        if (!user.id) {
+        const token = localStorage.getItem('agrohelp_token');
+        if (!token) {
             alert('You must be logged in to create a service.');
             window.location.href = 'auth_pro.html';
             return;
         }
 
-        const newService = {
-            id: `service_${Date.now()}`, // Unique ID for the service
-            providerId: user.id,
-            providerName: user.name,
+        const formData = new FormData(form);
+        const serviceData = {
             name: formData.get('name'),
             category: formData.get('category'),
             description: formData.get('description'),
@@ -32,16 +25,32 @@ document.addEventListener('DOMContentLoaded', () => {
             imageUrl: formData.get('imageUrl'),
         };
 
-        if (!newService.name || !newService.category || !newService.price) {
+        if (!serviceData.name || !serviceData.category || !serviceData.price) {
             alert('Please fill in all required fields (Name, Category, Price).');
             return;
         }
 
-        const services = JSON.parse(localStorage.getItem('agrohelp_services')) || [];
-        services.push(newService);
-        localStorage.setItem('agrohelp_services', JSON.stringify(services));
+        try {
+            const response = await fetch('/api/services', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify(serviceData)
+            });
 
-        alert('Service created successfully!');
-        window.location.href = 'service.html'; // Redirect to the services page
+            if (!response.ok) {
+                const errorResult = await response.json();
+                throw new Error(errorResult.error || 'Failed to create service.');
+            }
+
+            alert('Service created successfully!');
+            window.location.href = 'dashboard.html'; // Redirect to the provider dashboard
+
+        } catch (error) {
+            console.error('Error creating service:', error);
+            alert(`Error: ${error.message}`);
+        }
     });
 });

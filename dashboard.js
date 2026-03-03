@@ -1,7 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
     const token = localStorage.getItem('agrohelp_token');
     const userRole = localStorage.getItem('agrohelp_user_role');
-    const userId = localStorage.getItem('agrohelp_user_id');
     const servicesGrid = document.getElementById('my-services-grid');
     const bookingsGrid = document.getElementById('my-bookings-grid'); // Assumes a new element for bookings in dashboard.html
     const authMessage = document.getElementById('auth-check-message');
@@ -20,24 +19,42 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
     }
 
-    // Load services created by the expert from localStorage
-    const allServices = JSON.parse(localStorage.getItem('agrohelp_services')) || [];
-    const myServices = allServices.filter(service => service.providerId === userId);
-
-    if (servicesGrid) {
-        if (myServices.length === 0) {
-            servicesGrid.innerHTML = `<p class="no-services-message">You have not created any services yet. <a href="create-service.html">Create one now!</a></p>`;
-        } else {
-            servicesGrid.innerHTML = '';
-            myServices.forEach(service => {
-            const serviceCardHTML = createDashboardServiceCard(service);
-                servicesGrid.insertAdjacentHTML('beforeend', serviceCardHTML);
+    // --- NEW: Fetch services and bookings from the backend API ---
+    async function loadProviderData() {
+        if (!servicesGrid) return;
+        try {
+            // Fetch services from the new provider-specific endpoint
+            // This endpoint should be protected and return services for the logged-in provider.
+            const response = await fetch('/api/services/provider/mine', {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
             });
+
+            if (!response.ok) {
+                throw new Error(`Failed to fetch services: ${response.statusText}`);
+            }
+
+            const myServices = await response.json();
+
+            if (myServices.length === 0) {
+                servicesGrid.innerHTML = `<p class="no-services-message">You have not created any services yet. <a href="create-service.html">Create one now!</a></p>`;
+            } else {
+                servicesGrid.innerHTML = '';
+                myServices.forEach(service => {
+                    const serviceCardHTML = createDashboardServiceCard(service);
+                    servicesGrid.insertAdjacentHTML('beforeend', serviceCardHTML);
+                });
+            }
+        } catch (error) {
+            console.error('Error loading services:', error);
+            servicesGrid.innerHTML = `<p class="no-services-message" style="color: var(--error-red);">Could not load your services. Please try again later.</p>`;
         }
     }
 
     // Load bookings for the expert's services
     loadProviderBookings();
+    loadProviderData();
 });
 
 function loadProviderBookings() {
@@ -45,12 +62,13 @@ function loadProviderBookings() {
     const bookingsGrid = document.getElementById('my-bookings-grid');
     if (!bookingsGrid) return;
 
-    const allServices = JSON.parse(localStorage.getItem('agrohelp_services')) || [];
-    const myServices = allServices.filter(service => service.providerId === userId);
-    const myServiceIds = myServices.map(s => s.id);
+    // TODO: This function also needs to be refactored to fetch bookings from an API endpoint
+    // like '/api/bookings/provider' instead of using localStorage.
+    // For now, we will leave the old logic to be updated later.
 
     const allBookings = JSON.parse(localStorage.getItem('agrohelp_bookings')) || [];
-    const myBookings = allBookings.filter(booking => myServiceIds.includes(booking.serviceId)).sort((a, b) => new Date(b.bookingDate) - new Date(a.bookingDate));
+    const allServices = JSON.parse(localStorage.getItem('agrohelp_services')) || []; // Temporary
+    const myBookings = allBookings.filter(booking => booking.providerId === userId).sort((a, b) => new Date(b.bookingDate) - new Date(a.bookingDate));
 
     if (myBookings.length === 0) {
         bookingsGrid.innerHTML = `<p class="no-services-message">You have no bookings for your services yet.</p>`;
@@ -66,7 +84,9 @@ function loadProviderBookings() {
 
 function createDashboardServiceCard(service) {
     const imageUrl = service.imageUrl || 'https://images.unsplash.com/photo-1556056504-5c7696e4734d?w=600';
-    const serviceId = service.id; // Use 'id' from localStorage object
+    // IMPORTANT: MongoDB uses '_id' for its unique identifier, not 'id'.
+    // We must use service._id to link to the edit page.
+    const serviceId = service._id;
 
     return `
         <div class="service-card">

@@ -1,4 +1,4 @@
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
     const bookingDetailsContainer = document.getElementById('booking-details');
     const confirmBookingBtn = document.getElementById('confirm-booking-btn');
     const authMessage = document.getElementById('auth-check-message');
@@ -36,59 +36,69 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
     }
 
-    // Fetch service details from localStorage
-    const allServices = JSON.parse(localStorage.getItem('agrohelp_services')) || [];
-    const serviceToBook = allServices.find(s => s.id === serviceId);
+    try {
+        // Fetch service details from the API
+        const response = await fetch(`/api/services/${serviceId}`);
+        if (!response.ok) {
+            throw new Error('Selected service not found. It may have been removed.');
+        }
+        const serviceToBook = await response.json();
 
-    if (!serviceToBook) {
-        bookingDetailsContainer.innerHTML = '<p class="no-services-message">Selected service not found. It may have been removed.</p>';
-        confirmBookingBtn.style.display = 'none';
-        return;
-    }
+        // Set min date for date input to tomorrow to prevent same-day bookings
+        const tomorrow = new Date();
+        tomorrow.setDate(tomorrow.getDate() + 1);
+        const minDate = tomorrow.toISOString().split('T')[0];
 
-    // Set min date for date input to tomorrow to prevent same-day bookings
-    const tomorrow = new Date();
-    tomorrow.setDate(tomorrow.getDate() + 1);
-    const minDate = tomorrow.toISOString().split('T')[0];
-
-    // Display service details
-    bookingDetailsContainer.innerHTML = `
-        <h2>Confirm Your Booking</h2>
-        <div class="service-card" style="margin-top: 1.5rem;">
-            <div class="card-body">
-                <h3 class="card-title">${serviceToBook.name}</h3>
-                <p class="card-provider">Provider: ${serviceToBook.providerName}</p>
-                <p class="card-description">${serviceToBook.description || 'No description provided.'}</p>
-                <div class="card-footer">
-                    <span class="card-price">Price: ₹${parseFloat(serviceToBook.price).toFixed(2)}</span>
+        // Display service details
+        bookingDetailsContainer.innerHTML = `
+            <h2>Confirm Your Booking</h2>
+            <div class="service-card" style="margin-top: 1.5rem;">
+                <div class="card-body">
+                    <h3 class="card-title">${serviceToBook.name}</h3>
+                    <p class="card-provider">Provider: ${serviceToBook.providerName}</p>
+                    <p class="card-description">${serviceToBook.description || 'No description provided.'}</p>
+                    <div class="card-footer">
+                        <span class="card-price">Price: ₹${parseFloat(serviceToBook.price).toFixed(2)}</span>
+                    </div>
                 </div>
             </div>
-        </div>
-        <div id="booking-form" style="margin-top: 2rem;">
-            <h3>Select a Preferred Date and Time</h3>
-            <p>The provider will confirm the final schedule. Time is optional and can be set between 9 AM and 8 PM.</p>
-            <div class="input-group" style="margin-top: 1rem;">
-                <i class="fa-solid fa-calendar-day"></i>
-                <input type="date" id="bookingDate" name="bookingDate" min="${minDate}" required>
+            <div id="booking-form" style="margin-top: 2rem;">
+                <h3>Select a Preferred Date and Time</h3>
+                <p>The provider will confirm the final schedule. Time is optional and can be set between 9 AM and 8 PM.</p>
+                <div class="input-group" style="margin-top: 1rem;">
+                    <i class="fa-solid fa-calendar-day"></i>
+                    <input type="date" id="bookingDate" name="bookingDate" min="${minDate}" required>
+                </div>
+                <div class="input-group">
+                    <i class="fa-solid fa-clock"></i>
+                    <select id="bookingTime" name="bookingTime">
+                        <!-- Time options will be populated here -->
+                    </select>
+                </div>
+                <h3 style="margin-top: 2rem;">Select Payment Method</h3>
+                <div class="input-group" style="margin-top: 1rem;">
+                    <i class="fa-solid fa-money-bill-wave"></i>
+                    <select id="paymentMethod" name="paymentMethod" required>
+                        <option value="Cash on Service" selected>Cash on Service</option>
+                    </select>
+                </div>
             </div>
-            <div class="input-group">
-                <i class="fa-solid fa-clock"></i>
-                <select id="bookingTime" name="bookingTime">
-                    <!-- Time options will be populated here -->
-                </select>
-            </div>
-            <h3 style="margin-top: 2rem;">Select Payment Method</h3>
-            <div class="input-group" style="margin-top: 1rem;">
-                <i class="fa-solid fa-money-bill-wave"></i>
-                <select id="paymentMethod" name="paymentMethod" required>
-                    <option value="Cash on Service" selected>Cash on Service</option>
-                </select>
-            </div>
-        </div>
-        <p style="margin-top: 1.5rem; font-size: 1.1rem;">Click "Confirm Booking" to send your request.</p>
-    `;
+            <p style="margin-top: 1.5rem; font-size: 1.1rem;">Click "Confirm Booking" to send your request.</p>
+        `;
 
-    // Populate time options to strictly control user selection
+        // Populate time options
+        populateTimeOptions();
+
+        // Handle booking confirmation
+        confirmBookingBtn.addEventListener('click', () => createBooking(serviceToBook, userId, userName));
+
+    } catch (error) {
+        bookingDetailsContainer.innerHTML = `<p class="no-services-message">${error.message}</p>`;
+        confirmBookingBtn.style.display = 'none';
+    }
+});
+
+function populateTimeOptions() {
     const timeSelect = document.getElementById('bookingTime');
     if (timeSelect) {
         let timeOptionsHTML = '<option value="">Select a time (optional)</option>';
@@ -101,35 +111,36 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         timeSelect.innerHTML = timeOptionsHTML;
     }
+}
 
-    // Handle booking confirmation
-    confirmBookingBtn.addEventListener('click', () => {
-        const requestedDate = document.getElementById('bookingDate').value;
-        const requestedTime = document.getElementById('bookingTime').value;
-        const paymentMethod = document.getElementById('paymentMethod').value;
+function createBooking(serviceToBook, userId, userName) {
+    // TODO: This function needs to be refactored to send a POST request to a new '/api/bookings' endpoint.
+    // For now, it will continue to use localStorage to demonstrate the service data fetching is working.
+    const requestedDate = document.getElementById('bookingDate').value;
+    const requestedTime = document.getElementById('bookingTime').value;
+    const paymentMethod = document.getElementById('paymentMethod').value;
 
-        if (!requestedDate) {
-            alert('Please select a preferred date for your booking.');
-            return;
-        }
+    if (!requestedDate) {
+        alert('Please select a preferred date for your booking.');
+        return;
+    }
 
-        const newBooking = {
-            bookingId: `booking_${Date.now()}`,
-            serviceId: serviceToBook.id,
-            providerId: serviceToBook.providerId,
-            customerId: userId,
-            customerName: userName,
-            bookingDate: new Date().toISOString(),
-            requestedDateTime: requestedTime ? `${requestedDate}T${requestedTime}` : requestedDate,
-            status: 'Pending',
-            paymentMethod: paymentMethod
-        };
+    const newBooking = {
+        bookingId: `booking_${Date.now()}`,
+        serviceId: serviceToBook._id, // Use MongoDB's _id
+        providerId: serviceToBook.providerId,
+        customerId: userId,
+        customerName: userName,
+        bookingDate: new Date().toISOString(),
+        requestedDateTime: requestedTime ? `${requestedDate}T${requestedTime}` : requestedDate,
+        status: 'Pending',
+        paymentMethod: paymentMethod
+    };
 
-        const bookings = JSON.parse(localStorage.getItem('agrohelp_bookings')) || [];
-        bookings.push(newBooking);
-        localStorage.setItem('agrohelp_bookings', JSON.stringify(bookings));
+    const bookings = JSON.parse(localStorage.getItem('agrohelp_bookings')) || [];
+    bookings.push(newBooking);
+    localStorage.setItem('agrohelp_bookings', JSON.stringify(bookings));
 
-        alert('Booking successful! You can view your bookings in "My Bookings".');
-        window.location.href = 'my-bookings.html';
-    });
-});
+    alert('Booking request sent! You can view your bookings in "My Bookings".');
+    window.location.href = 'my-bookings.html';
+}

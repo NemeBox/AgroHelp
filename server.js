@@ -2,8 +2,8 @@ require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const mongoose = require('mongoose');
-const userRoutes = require('./userRoutes');
-// const productRoutes = require('./productRoutes'); // Temporarily disabled for debugging
+const userRoutes = require('./userRoutes'); // For user login/signup
+const serviceRoutes = require('./serviceRoutes'); // For all service operations
 
 // --- Database Connection ---
 const dbUri = process.env.MONGODB_URI;
@@ -33,10 +33,8 @@ app.use((req, res, next) => {
 // --- Routes ---
 // Public routes for authentication
 app.use('/api/user', userRoutes);
-
-// Temporarily disable product routes for debugging
-// When re-enabling, ensure it also has the /api prefix
-// app.use('/api/products', productRoutes);
+// Routes for services (creating, fetching, etc.)
+app.use('/api/services', serviceRoutes);
 
 // Export the app for the serverless function
 module.exports = app;
