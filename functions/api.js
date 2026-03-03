@@ -226,9 +226,36 @@ router.patch('/bookings/:id/status', authMiddleware, async (req, res) => {
 // Handles GET /api/services (for public listing)
 router.get('/services', async (req, res) => {
   try {
-    // Fetch all services and populate the provider's name from the User model.
-    const services = await Service.find({})
-      .populate({ path: 'providerId', select: 'name' }); // Populate provider's name
+    // Use an aggregation pipeline to ensure we only return services with valid, existing providers.
+    const services = await Service.aggregate([
+      {
+        // This is an efficient way to join the services collection with the users collection.
+        $lookup: {
+          from: 'users', // The actual name of the users collection in MongoDB
+          localField: 'providerId',
+          foreignField: '_id',
+          as: 'providerDetails'
+        }
+      },
+      {
+        // The $unwind stage with this option will filter out any services where a provider was not found.
+        $unwind: {
+          path: '$providerDetails',
+          preserveNullAndEmptyArrays: false
+        }
+      },
+      {
+        // Reshape the output to match the format the frontend expects.
+        $project: {
+          name: 1,
+          price: 1,
+          category: 1,
+          description: 1,
+          imageUrl: 1,
+          providerId: { _id: '$providerDetails._id', name: '$providerDetails.name' }
+        }
+      }
+    ]);
     res.status(200).json(services);
   } catch (error) {
     console.error('Error fetching public services:', error);
