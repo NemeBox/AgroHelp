@@ -46,7 +46,11 @@ function createPublicServiceCard(service) {
                 <p class="card-description">${service.description || 'No description provided.'}</p>
                 <div class="card-footer">
                     <span class="card-price">₹${parseFloat(service.price).toFixed(2)}</span>
-                    <a href="booking.html?serviceId=${serviceId}" class="cta-btn-small">Book Now</a>
+                    ${
+                        service.providerId
+                            ? `<a href="booking.html?serviceId=${serviceId}" class="cta-btn-small">Book Now</a>`
+                            : `<span class="cta-btn-small disabled" title="This service cannot be booked as the provider is not available.">Unavailable</span>`
+                    }
                 </div>
             </div>
         </div>
