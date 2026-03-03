@@ -57,6 +57,55 @@ router.use(async (req, res, next) => {
   next();
 });
 
+// --- USER AUTHENTICATION ROUTES ---
+
+// Customer Registration
+router.post('/user/signup/customer', async (req, res) => {
+  try {
+    const { name, email, password } = req.body;
+    // TODO: Add validation, hash password, and create a new User with role 'customer'.
+    // const user = new User({ name, email, password: hashedPassword, role: 'customer' });
+    // await user.save();
+    // const token = createToken(user._id);
+    console.log('Signing up customer:', { name, email });
+    // Return data in the flat format expected by auth_cus.html
+    res.status(201).json({ token: 'sample-jwt-token', _id: 'new-customer-id', name, email, role: 'customer' });
+  } catch (error) {
+    res.status(500).json({ error: `Server error during customer registration: ${error.message}` });
+  }
+});
+
+// Customer Login
+router.post('/user/login/customer', async (req, res) => {
+  try {
+    const { email, password } = req.body;
+    // TODO: Find user by email, check password hash, and generate a real JWT token.
+    // const user = await User.findOne({ email, role: 'customer' });
+    // if (!user) return res.status(404).json({ error: 'User not found' });
+    // const match = await bcrypt.compare(password, user.password);
+    // if (!match) return res.status(400).json({ error: 'Incorrect password' });
+    // const token = createToken(user._id);
+    console.log('Logging in customer:', { email });
+    // Return data in the flat format expected by auth_cus.html
+    res.status(200).json({ token: 'sample-jwt-token', _id: '65c5fedcba0987654321fedc', name: 'Test Customer', email, role: 'customer' });
+  } catch (error) {
+    res.status(400).json({ error: `Customer login failed: ${error.message}` });
+  }
+});
+
+// Provider Login (assuming a similar route exists for auth_pro.html)
+router.post('/user/login/provider', async (req, res) => {
+  try {
+    const { email, password } = req.body;
+    // TODO: Implement provider login logic similar to customer login.
+    console.log('Logging in provider:', { email });
+    res.status(200).json({ token: 'sample-jwt-token', _id: '65c51234567890abcdef1234', name: 'Test Provider', email, role: 'provider' });
+  } catch (error) {
+    res.status(400).json({ error: `Provider login failed: ${error.message}` });
+  }
+});
+
+
 // --- BOOKING ROUTE ---
 // Handles POST /api/bookings
 router.post('/bookings', authMiddleware, async (req, res) => {
