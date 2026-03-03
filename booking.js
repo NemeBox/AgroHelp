@@ -147,9 +147,19 @@ async function createBooking(serviceToBook, userId, userName) {
         });
 
         if (!response.ok) {
-            const errorData = await response.json();
-            // This handles the case where the service is no longer available, providing correct feedback.
-            throw new Error(errorData.message || 'Failed to create booking.');
+            let errorMessage = `Request failed with status ${response.status}.`;
+            // Check if the response is JSON before trying to parse it.
+            const contentType = response.headers.get('content-type');
+            if (contentType && contentType.includes('application/json')) {
+                const errorData = await response.json();
+                errorMessage = errorData.message || 'Failed to create booking.';
+            } else {
+                // If not JSON, it's likely an HTML error page from the server (like a 404 page).
+                const textError = await response.text();
+                console.error("Server returned a non-JSON error response:", textError);
+                errorMessage = `The API endpoint was not found (404). Please check the server configuration.`;
+            }
+            throw new Error(errorMessage);
         }
 
         alert('Booking request sent! You will be redirected to your bookings.');
