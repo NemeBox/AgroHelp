@@ -309,7 +309,6 @@ router.get('/bookings/:id', authMiddleware, async (req, res) => {
   try {
     const booking = await Booking.findById(req.params.id)
       .populate({ path: 'serviceId', populate: { path: 'providerId', model: 'User', select: 'name' } }) // Populate service and provider details
-      .populate({ path: 'customerId', select: 'name' }) // Populate customer name
       .populate('review'); // Populate review if it exists
 
     if (!booking) {
@@ -317,7 +316,7 @@ router.get('/bookings/:id', authMiddleware, async (req, res) => {
     }
 
     // Security check: ensure the user requesting is the customer or provider.
-    if (booking.customerId._id.toString() !== req.user.id && booking.providerId.toString() !== req.user.id) {
+    if (booking.customerId.toString() !== req.user.id && booking.providerId.toString() !== req.user.id) {
       return res.status(403).json({ message: 'Unauthorized to view this booking.' });
     }
 
