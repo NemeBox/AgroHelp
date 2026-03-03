@@ -105,6 +105,21 @@ router.post('/user/login/provider', async (req, res) => {
   }
 });
 
+// Provider Registration
+router.post('/user/signup/provider', async (req, res) => {
+  try {
+    const { name, email, password, phone } = req.body;
+    // TODO: Add validation, hash password, and create a new User with role 'provider'.
+    // const user = new User({ name, email, password: hashedPassword, role: 'provider', phone });
+    // await user.save();
+    // const token = createToken(user._id);
+    console.log('Signing up provider:', { name, email, phone });
+    res.status(201).json({ token: 'sample-jwt-token', _id: 'new-provider-id', name, email, phone, role: 'provider' });
+  } catch (error) {
+    res.status(500).json({ error: `Server error during provider registration: ${error.message}` });
+  }
+});
+
 
 // --- BOOKING ROUTE ---
 // Handles POST /api/bookings
