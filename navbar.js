@@ -105,14 +105,6 @@ function updateAuthHeader() {
                 dashboardLink.textContent = 'My Dashboard';
                 profileDropdownContent.prepend(dashboardLink);
             }
-            // Add "Account Settings" link if it doesn't exist
-            if (!profileDropdownContent.querySelector('a[href="account-settings.html"]')) {
-                const settingsLink = document.createElement('a');
-                settingsLink.href = 'account-settings.html';
-                settingsLink.classList.add('cta-btn');
-                settingsLink.textContent = 'Account Settings';
-                profileDropdownContent.prepend(settingsLink);
-            }
         }
 
         // Add "My Bookings" link for customers
