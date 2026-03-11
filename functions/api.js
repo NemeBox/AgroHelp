@@ -285,20 +285,17 @@ router.get('/bookings/mine', authMiddleware, async (req, res) => {
 router.get('/bookings/provider', authMiddleware, async (req, res) => {
   try {
     const providerId = req.user.id; // This now uses a valid ObjectId string from the middleware
+    // Find all bookings for the provider, and populate all necessary details in one go.
+    // This is more efficient than the previous method of finding services first.
+    const bookings = await Booking.find({ providerId: providerId })
+      .populate('serviceId') // Populate the service details
+      .populate({ path: 'customerId', select: 'name' }) // Populate the customer's name
+      .populate('review') // Populate the review details
+      .sort({ createdAt: -1 });
 
-    // 1. Find all services offered by the logged-in provider.
-    const providerServices = await Service.find({ providerId: providerId }).select('_id name');
-    const serviceIds = providerServices.map(s => s._id);
-
-    // 2. Find all bookings for those services.
-    // We populate 'serviceId' to get service details and 'customerId' to get the customer's name.
-    const bookings = await Booking.find({ serviceId: { $in: serviceIds } })
-      .populate('serviceId')
-      .populate({ path: 'customerId', select: 'name' }) // Only select the 'name' field from the User model
-      .sort({ createdAt: -1 }); // Sort by creation date
-
-    res.status(200).json(bookings); // Ensure this is always an array
+    res.status(200).json(bookings);
   } catch (error) {
+    console.error('Error fetching provider bookings:', error);
     res.status(500).json({ message: `Server error while fetching provider bookings: ${error.message}` });
   }
 });
